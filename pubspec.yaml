@@ -34,3 +34,12 @@ flutter:
     - assets/logo/
     - assets/icons/
     - assets/images/
+
+  # ------------ LOCAL FONTS --------
+  fonts:
+    - family: Cabin
+      fonts:
+       - asset: assets/fonts/cabin_font.ttf
+    - family: Greycliff
+      fonts:
+       - asset: assets/fonts/greycliff_font.otf
