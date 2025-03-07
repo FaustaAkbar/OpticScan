@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/arif/Documents/lib/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/arif/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/arif/Documents/projek/optic-scan-mobile/android/app/.cxx/Debug/3b5q3q2m/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/arif/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/arif/Documents/projek/optic-scan-mobile/android/app/.cxx/Debug/3b5q3q2m/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

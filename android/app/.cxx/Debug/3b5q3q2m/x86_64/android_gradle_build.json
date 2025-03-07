@@ -1,0 +1,28 @@
+{
+  "buildFiles": [
+    "/Users/arif/Documents/lib/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/arif/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/arif/Documents/projek/optic-scan-mobile/android/app/.cxx/Debug/3b5q3q2m/x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/arif/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/arif/Documents/projek/optic-scan-mobile/android/app/.cxx/Debug/3b5q3q2m/x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {},
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/Users/arif/Library/Android/sdk/ndk/26.3.11579264/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/Users/arif/Library/Android/sdk/ndk/26.3.11579264/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": []
+}

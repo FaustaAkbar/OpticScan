@@ -1,0 +1,2 @@
+/Users/arif/Documents/projek/optic-scan-mobile/android/app/.cxx/Debug/3b5q3q2m/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/arif/Documents/projek/optic-scan-mobile/android/app/.cxx/Debug/3b5q3q2m/arm64-v8a/CMakeFiles/rebuild_cache.dir
