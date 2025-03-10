@@ -18,6 +18,21 @@ class LoginController extends GetxController {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
 
+  @override
+  void onInit() {
+    super.onInit();
+    emailController.addListener(() {
+      if (emailController.text.trim().isNotEmpty) {
+        emailError.value = '';
+      }
+    });
+    passwordController.addListener(() {
+      if (passwordController.text.isNotEmpty) {
+        passwordError.value = '';
+      }
+    });
+  }
+
   bool validateForm() {
     bool isValid = true;
 

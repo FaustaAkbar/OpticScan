@@ -9,10 +9,12 @@ class SignupController extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  final Rx<DateTime?> birthDate = Rx<DateTime?>(null);
   final RxBool isLoading = false.obs;
   final RxBool isPasswordVisible = false.obs;
 
   final RxString nameError = ''.obs;
+  final RxString birthDateError = ''.obs;
   final RxString emailError = ''.obs;
   final RxString passwordError = ''.obs;
 
@@ -20,17 +22,79 @@ class SignupController extends GetxController {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
 
+  @override
+  void onInit() {
+    super.onInit();
+    nameController.addListener(() {
+      if (nameController.text.trim().isNotEmpty) {
+        nameError.value = '';
+      }
+    });
+
+    emailController.addListener(() {
+      if (emailController.text.trim().isNotEmpty) {
+        emailError.value = '';
+      }
+    });
+
+    passwordController.addListener(() {
+      if (passwordController.text.isNotEmpty) {
+        passwordError.value = '';
+      }
+    });
+  }
+
+  Future<void> selectBirthDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now()
+          .subtract(const Duration(days: 365 * 18)), // 18 years ago
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: const Color(0xFF1A73E8), // Button and header background
+              onPrimary: Colors.white, // Button and header foreground
+              surface: Colors.white, // Dialog background
+              onSurface: Colors.black87, // Dialog text
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      birthDate.value = picked;
+      birthDateError.value = '';
+    }
+  }
+
+  String? formatBirthDate() {
+    if (birthDate.value == null) return null;
+    return '${birthDate.value!.day}/${birthDate.value!.month}/${birthDate.value!.year}';
+  }
+
   bool validateForm() {
     bool isValid = true;
 
     // Reset errors
     nameError.value = '';
+    birthDateError.value = '';
     emailError.value = '';
     passwordError.value = '';
 
     // Validate name
     if (nameController.text.trim().isEmpty) {
       nameError.value = 'Name is required';
+      isValid = false;
+    }
+
+    // Validate birth date
+    if (birthDate.value == null) {
+      birthDateError.value = 'Birth date is required';
       isValid = false;
     }
 
@@ -65,6 +129,7 @@ class SignupController extends GetxController {
 
       final response = await _apiService.signup(
         name: nameController.text.trim(),
+        birthDate: birthDate.value!,
         email: emailController.text.trim(),
         password: passwordController.text,
       );

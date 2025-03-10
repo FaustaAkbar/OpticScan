@@ -5,7 +5,7 @@ class OElevatedButtonTheme {
 
   static final elevatedButtonTheme = ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFF4ABED9),
+      backgroundColor: const Color(0xFF146EF5),
       foregroundColor: Colors.white,
       minimumSize: const Size(double.infinity, 50),
       shape: RoundedRectangleBorder(

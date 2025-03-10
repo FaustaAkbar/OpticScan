@@ -5,9 +5,9 @@ class OoutlinedButtonTheme {
 
   static final outlinedButtonTheme = OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      foregroundColor: const Color(0xFF4ABED9),
+      foregroundColor: const Color(0xFF146EF5),
       minimumSize: const Size(double.infinity, 50),
-      side: const BorderSide(color: Color(0xFF4ABED9)),
+      side: const BorderSide(color: Color(0xFF146EF5)),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0),
       ),

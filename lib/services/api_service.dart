@@ -23,6 +23,7 @@ class ApiService {
   // =============== Signup API ===============
   Future<ApiResponse> signup({
     required String name,
+    required DateTime birthDate,
     required String email,
     required String password,
   }) async {
@@ -31,6 +32,8 @@ class ApiService {
         '/auth/signup',
         data: {
           'name': name,
+          'birthDate':
+              '${birthDate.year}-${birthDate.month.toString().padLeft(2, '0')}-${birthDate.day.toString().padLeft(2, '0')}',
           'email': email,
           'password': password,
         },

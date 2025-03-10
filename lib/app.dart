@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:opticscan/features/authentication/screens/login/login.dart';
 import 'package:opticscan/utils/theme/theme.dart';
+import 'package:opticscan/views/splash_view.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -11,7 +11,7 @@ class App extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: OAppTheme.themeApp,
-      home: const LoginView(),
+      home: const SplashView(),
     );
   }
 }
