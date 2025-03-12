@@ -55,10 +55,10 @@ class SignupController extends GetxController {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: const Color(0xFF1A73E8), // Button and header background
-              onPrimary: Colors.white, // Button and header foreground
-              surface: Colors.white, // Dialog background
-              onSurface: Colors.black87, // Dialog text
+              primary: const Color(0xFF1A73E8),
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black87,
             ),
           ),
           child: child!,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:opticscan/features/authentication/controllers/login_controller.dart';
 import 'package:opticscan/features/authentication/screens/signup/signup.dart';
+import 'package:opticscan/utils/animations/animation.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -11,85 +12,18 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-
-  // Staggered animations for each element
-  late Animation<double> _headerFadeAnimation;
-  late Animation<double> _formFadeAnimation;
-  late Animation<double> _buttonFadeAnimation;
-  late Animation<double> _dividerFadeAnimation;
+    with SingleTickerProviderStateMixin, FormAnimationControllerProvider {
+  late StaggeredIntervals _intervals;
 
   @override
   void initState() {
     super.initState();
-
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
+    initAnimationController(this);
+    _intervals = StaggeredIntervals(
+      totalFields: 4, // Header, email, password, button
+      endTime: 0.8,
     );
-
-    // Main fade animation
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
-
-    // Slide animation
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
-
-    // Staggered animations for each section
-    _headerFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.0, 0.3, curve: Curves.easeOut),
-    ));
-
-    _formFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.2, 0.6, curve: Curves.easeOut),
-    ));
-
-    _buttonFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.5, 0.8, curve: Curves.easeOut),
-    ));
-
-    _dividerFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.7, 1.0, curve: Curves.easeOut),
-    ));
-
-    // Start the animation
-    _animationController.forward();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
+    startAnimation();
   }
 
   @override
@@ -102,251 +36,257 @@ class _LoginViewState extends State<LoginView>
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: SlideTransition(
-                position: _slideAnimation,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 40),
+            child: FormAnimationBuilder(
+              controller: animationController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 40),
 
-                    // =============== HEADER ===============
-                    FadeTransition(
-                      opacity: _headerFadeAnimation,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'LOGIN',
-                            style: TextStyle(
-                              fontFamily: "Greycliff",
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF333333),
-                            ),
+                  // =============== HEADER ===============
+                  StaggeredFormField(
+                    controller: animationController,
+                    startInterval: _intervals.getFieldInterval(0)['start']!,
+                    endInterval: _intervals.getFieldInterval(0)['end']!,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'LOGIN',
+                          style: TextStyle(
+                            fontFamily: "Greycliff",
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF333333),
                           ),
-                          const SizedBox(height: 8),
-                          RichText(
-                            text: const TextSpan(
-                              text: 'Login to continue to access ',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Color(0xACACACAC),
-                                fontWeight: FontWeight.w400,
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: 'OpticScan',
-                                  style: TextStyle(
-                                    color: Color(0xFF146EF5),
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-
-                    // =============== FORM FIELD ===============
-                    FadeTransition(
-                      opacity: _formFadeAnimation,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Email',
+                        ),
+                        const SizedBox(height: 8),
+                        RichText(
+                          text: const TextSpan(
+                            text: 'Login to continue to access ',
                             style: TextStyle(
                               fontSize: 16,
-                              fontWeight: FontWeight.w700,
+                              color: Color(0xACACACAC),
+                              fontWeight: FontWeight.w400,
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Obx(() => TextField(
-                                cursorColor: Colors.black,
-                                controller: controller.emailController,
-                                keyboardType: TextInputType.emailAddress,
-                                style: const TextStyle(
-                                    fontFamily: "Cabin",
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 16),
-                                decoration: InputDecoration(
-                                  hintText: 'Enter your email',
-                                  errorText: controller.emailError.value.isEmpty
-                                      ? null
-                                      : controller.emailError.value,
-                                ),
-                              )),
-                          const SizedBox(height: 20),
-                          const Text(
-                            'Password',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Obx(() => TextField(
-                                cursorColor: Colors.black,
-                                controller: controller.passwordController,
-                                obscureText:
-                                    !controller.isPasswordVisible.value,
-                                style: const TextStyle(
-                                    fontFamily: "Cabin",
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 16),
-                                decoration: InputDecoration(
-                                  hintText: 'Enter your password',
-                                  errorText:
-                                      controller.passwordError.value.isEmpty
-                                          ? null
-                                          : controller.passwordError.value,
-                                  suffixIcon: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
-                                        height: 24,
-                                        width: 1,
-                                        color: const Color(0xACACACAC),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(
-                                          controller.isPasswordVisible.value
-                                              ? Icons.visibility_off
-                                              : Icons.visibility,
-                                          color: const Color(0xFF146EF5),
-                                        ),
-                                        onPressed:
-                                            controller.togglePasswordVisibility,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-
-                    // =============== LOGIN BUTTON ===============
-                    FadeTransition(
-                      opacity: _buttonFadeAnimation,
-                      child: TweenAnimationBuilder<double>(
-                        tween: Tween<double>(begin: 0.95, end: 1.0),
-                        duration: const Duration(milliseconds: 1000),
-                        curve: Curves.elasticOut,
-                        builder: (context, value, child) {
-                          return Transform.scale(
-                            scale: value,
-                            child: Obx(() => ElevatedButton(
-                                  onPressed: controller.isLoading.value
-                                      ? null
-                                      : controller.login,
-                                  style: ElevatedButton.styleFrom(
-                                    minimumSize:
-                                        const Size(double.infinity, 50),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  child: controller.isLoading.value
-                                      ? const SizedBox(
-                                          height: 20,
-                                          width: 20,
-                                          child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : const Text(
-                                          'Login',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                )),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // =============== DIVIDER SECTION ===============
-                    FadeTransition(
-                      opacity: _dividerFadeAnimation,
-                      child: Column(
-                        children: [
-                          Row(
                             children: [
-                              Expanded(
-                                child: Container(
-                                  height: 1,
-                                  color: const Color(0xACACACAC),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: Text(
-                                  'Don\'t have any account?',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xACACACAC),
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  height: 1,
-                                  color: const Color(0xACACACAC),
+                              TextSpan(
+                                text: 'OpticScan',
+                                style: TextStyle(
+                                  color: Color(0xFF146EF5),
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 24),
-
-                          // =============== CREATE ACCOUNT BUTTON ===============
-                          TweenAnimationBuilder<double>(
-                            tween: Tween<double>(begin: 0.95, end: 1.0),
-                            duration: const Duration(milliseconds: 1000),
-                            curve: Curves.elasticOut,
-                            builder: (context, value, child) {
-                              return Transform.scale(
-                                scale: value,
-                                child: OutlinedButton(
-                                  onPressed: () {
-                                    Get.to(() => SignupView());
-                                  },
-                                  style: OutlinedButton.styleFrom(
-                                    minimumSize:
-                                        const Size(double.infinity, 50),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    'Create Account',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  // =============== FORM FIELDS ===============
+                  StaggeredFormField(
+                    controller: animationController,
+                    startInterval: _intervals.getFieldInterval(1)['start']!,
+                    endInterval: _intervals.getFieldInterval(1)['end']!,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Email',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Obx(() => TextField(
+                              cursorColor: Colors.black,
+                              controller: controller.emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              style: const TextStyle(
+                                  fontFamily: "Cabin",
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 16),
+                              decoration: InputDecoration(
+                                hintText: 'Enter your email',
+                                errorText: controller.emailError.value.isEmpty
+                                    ? null
+                                    : controller.emailError.value,
+                              ),
+                            )),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  StaggeredFormField(
+                    controller: animationController,
+                    startInterval: _intervals.getFieldInterval(2)['start']!,
+                    endInterval: _intervals.getFieldInterval(2)['end']!,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Password',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Obx(() => TextField(
+                              cursorColor: Colors.black,
+                              controller: controller.passwordController,
+                              obscureText: !controller.isPasswordVisible.value,
+                              style: const TextStyle(
+                                  fontFamily: "Cabin",
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 16),
+                              decoration: InputDecoration(
+                                hintText: 'Enter your password',
+                                errorText:
+                                    controller.passwordError.value.isEmpty
+                                        ? null
+                                        : controller.passwordError.value,
+                                suffixIcon: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      height: 24,
+                                      width: 1,
+                                      color: const Color(0xACACACAC),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        controller.isPasswordVisible.value
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                        color: const Color(0xFF146EF5),
+                                      ),
+                                      onPressed:
+                                          controller.togglePasswordVisibility,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  // =============== LOGIN BUTTON ===============
+                  StaggeredFormField(
+                    controller: animationController,
+                    startInterval: _intervals.getFieldInterval(3)['start']!,
+                    endInterval: _intervals.getFieldInterval(3)['end']!,
+                    child: Obx(() => AnimatedButton(
+                          isLoading: controller.isLoading.value,
+                          loadingWidget: ElevatedButton(
+                            onPressed: controller.isLoading.value
+                                ? null
+                                : controller.login,
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+                          child: ElevatedButton(
+                            onPressed: controller.login,
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        )),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // =============== DIVIDER SECTION ===============
+                  StaggeredFormField(
+                    controller: animationController,
+                    startInterval: 0.7,
+                    endInterval: 0.9,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: 1,
+                                color: const Color(0xACACACAC),
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Text(
+                                'Don\'t have any account?',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xACACACAC),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                height: 1,
+                                color: const Color(0xACACACAC),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+
+                        // =============== CREATE ACCOUNT BUTTON ===============
+                        AnimatedButton(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              Get.off(() => SignupView());
+                            },
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              'Create Account',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
