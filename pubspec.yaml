@@ -1,7 +1,7 @@
 name: opticscan
 description: "Optic Scan Mobile App"
 
-publish_to: 'none' 
+publish_to: "none"
 version: 1.0.0+1
 environment:
   sdk: ^3.6.2
@@ -17,6 +17,9 @@ dependencies:
   dio: ^5.8.0+1
   # State manajemen
   get: ^4.6.6
+  lucide_icons: ^0.257.0
+  camera: ^0.11.1
+  image_picker: ^1.1.2
 
 # --------------- PACKAGES END -----------
 
@@ -25,11 +28,9 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
 
-
 flutter:
   uses-material-design: true
 
-  # ------------ LOCAL ASSETS ------------
   assets:
     - assets/logo/
     - assets/icons/
