@@ -17,7 +17,11 @@ dependencies:
   dio: ^5.8.0+1
   # State manajemen
   get: ^4.6.6
-
+  # Formatter
+  intl: ^0.20.2
+  #storage key and jwt
+  shared_preferences: ^2.5.2
+  jwt_decoder: ^2.0.1
 # --------------- PACKAGES END -----------
 
 dev_dependencies:
