@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   final Dio _dio = Dio();
-  final String _baseUrl = 'https://vb9xtq5f-4000.asse.devtunnels.ms';
+  final String _baseUrl = 'http://localhost:4000';
 
   // Token storage keys
   static const String ACCESS_TOKEN_KEY = 'accessToken';
@@ -100,8 +100,9 @@ class ApiService {
         data: {
           'name': name,
           'email': email,
-          'password': password,
           'birthdate': birthdate.toIso8601String().split('T')[0],
+          'role': 'pasien',
+          'password': password,
         },
       );
 
