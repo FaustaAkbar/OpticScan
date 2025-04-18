@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:opticscan/features/authentication/screens/login/login.dart';
+import 'package:opticscan/app/routes/app_pages.dart';
 import 'package:opticscan/services/api_service.dart';
+import 'package:opticscan/utils/animations/animation.dart';
 
-class SignupController extends GetxController {
+class SignupController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   // Text controllers
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  // Animation controller for signup animations
+  late AnimationController animationController;
 
   // Services
   final ApiService _apiService = ApiService();
@@ -27,6 +32,15 @@ class SignupController extends GetxController {
   void onInit() {
     super.onInit();
     _setupTextFieldListeners();
+
+    // Initialize animation controller
+    animationController = AnimationController(
+      vsync: this,
+      duration: AnimationDurations.formEntrance,
+    );
+
+    // Start the animation
+    animationController.forward();
   }
 
   @override
@@ -34,6 +48,7 @@ class SignupController extends GetxController {
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
+    animationController.dispose();
     super.onClose();
   }
 
@@ -154,7 +169,7 @@ class SignupController extends GetxController {
 
       if (response.success) {
         _showSuccessMessage(response.message);
-        Get.off(() => LoginView());
+        Get.offNamed(Routes.LOGIN);
       } else {
         _showErrorMessage(response.message);
       }

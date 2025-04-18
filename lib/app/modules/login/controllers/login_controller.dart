@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:opticscan/features/authentication/models/user_model.dart';
-import 'package:opticscan/features/home/views/home_view.dart';
+import 'package:opticscan/app/routes/app_pages.dart';
 import 'package:opticscan/services/api_service.dart';
-import 'package:opticscan/services/user_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:opticscan/utils/animations/animation.dart';
 
-class LoginController extends GetxController {
+class LoginController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final ApiService _apiService = ApiService();
-  final UserService _userService = Get.find<UserService>();
+
+  // Animation controller for login animations
+  late AnimationController animationController;
 
   final isLoading = false.obs;
   final isPasswordVisible = false.obs;
@@ -21,6 +22,15 @@ class LoginController extends GetxController {
   void onInit() {
     super.onInit();
     _setupListeners();
+
+    // Initialize animation controller
+    animationController = AnimationController(
+      vsync: this,
+      duration: AnimationDurations.formEntrance,
+    );
+
+    // Start the animation
+    animationController.forward();
   }
 
   void _setupListeners() {
@@ -41,6 +51,7 @@ class LoginController extends GetxController {
   void onClose() {
     emailController.dispose();
     passwordController.dispose();
+    animationController.dispose();
     super.onClose();
   }
 
@@ -59,21 +70,17 @@ class LoginController extends GetxController {
       emailError.value = 'Please enter a valid email';
       isValid = false;
     }
-
     // Validate password
     if (passwordController.text.isEmpty) {
       passwordError.value = 'Password is required';
       isValid = false;
     }
-
     return isValid;
   }
 
   Future<void> login() async {
     if (!_validateInputs()) return;
-
     isLoading.value = true;
-
     try {
       final response = await _apiService.login(
         email: emailController.text,
@@ -82,8 +89,7 @@ class LoginController extends GetxController {
 
       if (response.success) {
         _showSuccessMessage(response.message);
-        await _updateUserData(response);
-        Get.offAll(() => const HomeView());
+        Get.offNamed(Routes.HOME);
       } else {
         _showErrorMessage(response.message);
       }
@@ -112,19 +118,5 @@ class LoginController extends GetxController {
       backgroundColor: Colors.red,
       colorText: Colors.white,
     );
-  }
-
-  Future<void> _updateUserData(dynamic response) async {
-    if (response.data != null && response.data['user_type'] != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('user_type', response.data['user_type']);
-
-      _userService.currentUser.value = User(
-        name: 'Current User',
-        email: emailController.text,
-        userType: response.data['user_type'],
-      );
-      _userService.isLoggedIn.value = true;
-    }
   }
 }

@@ -1,35 +1,24 @@
 import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
-import 'package:opticscan/features/authentication/controllers/signup_controller.dart';
-import 'package:opticscan/features/authentication/screens/login/login.dart';
+import 'package:opticscan/app/routes/app_pages.dart';
 import 'package:opticscan/utils/animations/animation.dart';
 
-class SignupView extends StatefulWidget {
-  const SignupView({super.key});
+import '../controllers/login_controller.dart';
 
-  @override
-  State<SignupView> createState() => _SignupViewState();
-}
-
-class _SignupViewState extends State<SignupView>
-    with SingleTickerProviderStateMixin, FormAnimationControllerProvider {
-  late StaggeredIntervals _intervals;
-
-  @override
-  void initState() {
-    super.initState();
-
-    initAnimationController(this);
-    _intervals = StaggeredIntervals(
-      totalFields: 6, // Header, name, birth date, email, password, button
-      endTime: 0.8,
-    );
-    startAnimation();
-  }
+class LoginView extends GetView<LoginController> {
+  const LoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SignupController());
+    // Get the animation controller from the controller directly
+    final animCtrl = controller.animationController;
+
+    // Create intervals for staggered animations
+    final intervals = StaggeredIntervals(
+      totalFields: 4, // Header, email, password, button
+      endTime: 0.8,
+    );
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -38,7 +27,7 @@ class _SignupViewState extends State<SignupView>
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
             child: FormAnimationBuilder(
-              controller: animationController,
+              controller: animCtrl,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -46,14 +35,14 @@ class _SignupViewState extends State<SignupView>
 
                   // =============== HEADER ===============
                   StaggeredFormField(
-                    controller: animationController,
-                    startInterval: _intervals.getFieldInterval(0)['start']!,
-                    endInterval: _intervals.getFieldInterval(0)['end']!,
+                    controller: animCtrl,
+                    startInterval: intervals.getFieldInterval(0)['start']!,
+                    endInterval: intervals.getFieldInterval(0)['end']!,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'SIGN UP',
+                          'LOGIN',
                           style: TextStyle(
                             fontFamily: "Greycliff",
                             fontSize: 32,
@@ -64,7 +53,7 @@ class _SignupViewState extends State<SignupView>
                         const SizedBox(height: 8),
                         RichText(
                           text: const TextSpan(
-                            text: 'Create your ',
+                            text: 'Login to continue to access ',
                             style: TextStyle(
                               fontSize: 16,
                               color: Color(0xACACACAC),
@@ -79,14 +68,6 @@ class _SignupViewState extends State<SignupView>
                                   fontSize: 16,
                                 ),
                               ),
-                              TextSpan(
-                                text: ' account',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Color(0xACACACAC),
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
                             ],
                           ),
                         ),
@@ -95,117 +76,11 @@ class _SignupViewState extends State<SignupView>
                   ),
                   const SizedBox(height: 40),
 
-                  // =============== NAME FIELD ===============
+                  // =============== FORM FIELDS ===============
                   StaggeredFormField(
-                    controller: animationController,
-                    startInterval: _intervals.getFieldInterval(1)['start']!,
-                    endInterval: _intervals.getFieldInterval(1)['end']!,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Name',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Obx(() => TextField(
-                              cursorColor: Colors.black,
-                              controller: controller.nameController,
-                              style: const TextStyle(
-                                  fontFamily: "Cabin",
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 16),
-                              decoration: InputDecoration(
-                                hintText: 'Enter your name',
-                                errorText: controller.nameError.value.isEmpty
-                                    ? null
-                                    : controller.nameError.value,
-                              ),
-                            )),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // =============== BIRTH DATE FIELD ===============
-                  StaggeredFormField(
-                    controller: animationController,
-                    startInterval: _intervals.getFieldInterval(2)['start']!,
-                    endInterval: _intervals.getFieldInterval(2)['end']!,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Birth date',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Obx(() => InkWell(
-                              onTap: () => controller.selectBirthDate(context),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,
-                                  vertical: 14.0,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  border: Border.all(
-                                      color: const Color(0xACACACAC)),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        controller.formatBirthDate() ??
-                                            'Select birth date',
-                                        style: TextStyle(
-                                          fontWeight:
-                                              controller.birthDate.value == null
-                                                  ? FontWeight.w400
-                                                  : null,
-                                          fontSize:
-                                              controller.birthDate.value == null
-                                                  ? 12
-                                                  : null,
-                                          color:
-                                              controller.birthDate.value == null
-                                                  ? const Color(0xACACACAC)
-                                                  : Colors.black87,
-                                        ),
-                                      ),
-                                    ),
-                                    const Icon(Icons.calendar_today,
-                                        color: Color(0xFF146EF5)),
-                                  ],
-                                ),
-                              ),
-                            )),
-                        if (controller.birthDateError.value.isEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 6, left: 17),
-                            child: Obx(() => Text(
-                                  controller.birthDateError.value,
-                                  style: const TextStyle(
-                                    color: Color.fromARGB(255, 172, 43, 34),
-                                    fontSize: 12,
-                                  ),
-                                )),
-                          ),
-                      ],
-                    ),
-                  ),
-
-                  // =============== EMAIL FIELD ===============
-                  StaggeredFormField(
-                    controller: animationController,
-                    startInterval: _intervals.getFieldInterval(3)['start']!,
-                    endInterval: _intervals.getFieldInterval(3)['end']!,
+                    controller: animCtrl,
+                    startInterval: intervals.getFieldInterval(1)['start']!,
+                    endInterval: intervals.getFieldInterval(1)['end']!,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -237,11 +112,10 @@ class _SignupViewState extends State<SignupView>
                   ),
                   const SizedBox(height: 20),
 
-                  // =============== PASSWORD FIELD ===============
                   StaggeredFormField(
-                    controller: animationController,
-                    startInterval: _intervals.getFieldInterval(4)['start']!,
-                    endInterval: _intervals.getFieldInterval(4)['end']!,
+                    controller: animCtrl,
+                    startInterval: intervals.getFieldInterval(2)['start']!,
+                    endInterval: intervals.getFieldInterval(2)['end']!,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -294,28 +168,34 @@ class _SignupViewState extends State<SignupView>
                   ),
                   const SizedBox(height: 40),
 
-                  // =============== SIGN-UP BUTTON ===============
+                  // =============== LOGIN BUTTON ===============
                   StaggeredFormField(
-                    controller: animationController,
-                    startInterval: _intervals.getFieldInterval(5)['start']!,
-                    endInterval: _intervals.getFieldInterval(5)['end']!,
+                    controller: animCtrl,
+                    startInterval: intervals.getFieldInterval(3)['start']!,
+                    endInterval: intervals.getFieldInterval(3)['end']!,
                     child: Obx(() => AnimatedButton(
                           isLoading: controller.isLoading.value,
                           loadingWidget: ElevatedButton(
                             onPressed: controller.isLoading.value
                                 ? null
-                                : controller.signup,
+                                : controller.login,
                             style: ElevatedButton.styleFrom(
                               minimumSize: const Size(double.infinity, 50),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: const CircularProgressIndicator(
-                                color: Colors.white),
+                            child: const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            ),
                           ),
                           child: ElevatedButton(
-                            onPressed: controller.signup,
+                            onPressed: controller.login,
                             style: ElevatedButton.styleFrom(
                               minimumSize: const Size(double.infinity, 50),
                               shape: RoundedRectangleBorder(
@@ -323,8 +203,9 @@ class _SignupViewState extends State<SignupView>
                               ),
                             ),
                             child: const Text(
-                              'Sign Up',
+                              'Login',
                               style: TextStyle(
+                                color: Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -336,24 +217,24 @@ class _SignupViewState extends State<SignupView>
 
                   // =============== DIVIDER SECTION ===============
                   StaggeredFormField(
-                    controller: animationController,
-                    startInterval: 0.75,
-                    endInterval: 0.95,
+                    controller: animCtrl,
+                    startInterval: 0.7,
+                    endInterval: 0.9,
                     child: Column(
                       children: [
                         Row(
                           children: [
-                            const Expanded(
-                              child: Divider(
-                                color: Color(0xACACACAC),
-                                thickness: 1,
+                            Expanded(
+                              child: Container(
+                                height: 1,
+                                color: const Color(0xACACACAC),
                               ),
                             ),
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16.0),
                               child: Text(
-                                'Already have an account?',
+                                'Don\'t have any account?',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Color(0xACACACAC),
@@ -361,21 +242,21 @@ class _SignupViewState extends State<SignupView>
                                 ),
                               ),
                             ),
-                            const Expanded(
-                              child: Divider(
-                                color: Color(0xACACACAC),
-                                thickness: 1,
+                            Expanded(
+                              child: Container(
+                                height: 1,
+                                color: const Color(0xACACACAC),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 24),
 
-                        // =============== LOGIN BUTTON ===============
+                        // =============== CREATE ACCOUNT BUTTON ===============
                         AnimatedButton(
                           child: OutlinedButton(
                             onPressed: () {
-                              Get.off(() => LoginView());
+                              Get.offNamed(Routes.SIGNUP);
                             },
                             style: OutlinedButton.styleFrom(
                               minimumSize: const Size(double.infinity, 50),
@@ -384,7 +265,7 @@ class _SignupViewState extends State<SignupView>
                               ),
                             ),
                             child: const Text(
-                              'Login',
+                              'Create Account',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,

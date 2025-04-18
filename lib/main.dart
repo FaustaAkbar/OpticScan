@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
-import 'package:opticscan/app.dart';
-import 'package:opticscan/services/user_service.dart';
+import 'package:opticscan/utils/theme/theme.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+import 'app/routes/app_pages.dart';
 
-  // Initialize user service
-  Get.put(UserService());
-
-  runApp(const App());
+void main() {
+  runApp(
+    GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "OpticScan",
+      initialRoute: AppPages.INITIAL,
+      getPages: AppPages.routes,
+      theme: OAppTheme.themeApp,
+    ),
+  );
 }
