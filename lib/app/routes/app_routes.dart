@@ -1,6 +1,6 @@
 part of 'app_pages.dart';
-// DO NOT EDIT. This is code generated via package:get_cli/get_cli.dart
 
+// ROUTE UNTUK NAVIGASI
 abstract class Routes {
   Routes._();
   static const HOME = _Paths.HOME;
@@ -10,6 +10,7 @@ abstract class Routes {
   static const SPLASHSCREEN = _Paths.SPLASHSCREEN;
   static const PROFILE = _Paths.PROFILE;
   static const RIWAYAT = _Paths.RIWAYAT;
+  static const EYESCANNER = _Paths.EYESCANNER;
 }
 
 abstract class _Paths {
@@ -21,4 +22,5 @@ abstract class _Paths {
   static const SPLASHSCREEN = '/splashscreen';
   static const PROFILE = '/profile';
   static const RIWAYAT = '/riwayat';
+  static const EYESCANNER = '/eyescanner';
 }

@@ -1,62 +1,15 @@
-//SUDAH DI PINDAH DI MODULES EYESCANNER
-
-
-/* import 'package:camera/camera.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
-class EyeScannerScreen extends StatefulWidget {
-  @override
-  _EyeScannerScreenState createState() => _EyeScannerScreenState();
-}
+import 'package:get/get.dart';
+import 'package:opticscan/app/routes/app_pages.dart';
+import 'package:opticscan/app/shared/bindings/main_binding.dart';
+import 'package:opticscan/app/shared/widgets/main_layout.dart';
 
-class _EyeScannerScreenState extends State<EyeScannerScreen> {
-  CameraController? _controller;
-  List<CameraDescription>? cameras;
-  bool _isCameraInitialized = false;
-  int _selectedCameraIndex = 0;
+import '../controllers/eyescanner_controller.dart';
 
-  @override
-  void initState() {
-    super.initState();
-    _initCamera();
-  }S
-
-  Future<void> _initCamera() async {
-    cameras = await availableCameras();
-    _controller =
-        CameraController(cameras![_selectedCameraIndex], ResolutionPreset.high);
-
-    await _controller!.initialize();
-    if (mounted) {
-      setState(() {
-        _isCameraInitialized = true;
-      });
-    }
-  }
-
-  Future<void> _switchCamera() async {
-    if (cameras!.length > 1) {
-      setState(() {
-        _selectedCameraIndex = (_selectedCameraIndex + 1) % cameras!.length;
-      });
-      await _initCamera();
-    }
-  }
-
-  Future<void> _pickImageFromGallery() async {
-    final XFile? image =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      print("Gambar dari galeri: ${image.path}");
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller?.dispose();
-    super.dispose();
-  }
+class EyescannerView extends GetView<EyescannerController> {
+  const EyescannerView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +19,11 @@ class _EyeScannerScreenState extends State<EyeScannerScreen> {
         elevation: 0,
         leading: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              Get.offAll(
+                () => MainLayout(currentRoute: Routes.HOME),
+                binding: MainBinding(),
+                transition: Transition.noTransition,
+              );
             },
             icon: Icon(
               Icons.arrow_back,
@@ -76,22 +33,24 @@ class _EyeScannerScreenState extends State<EyeScannerScreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Kamera Preview
-          if (_isCameraInitialized && _controller != null)
-            Positioned.fill(
-              child: CameraPreview(_controller!),
-            ),
-
+          Obx(() {
+            if (controller.isCameraInitialized.value &&
+                controller.cameraController.value != null) {
+              return Positioned.fill(
+                child: CameraPreview(controller.cameraController.value!),
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          }),
           Positioned(
             top: 40,
             right: 20,
             child: IconButton(
               icon: const Icon(Icons.cached, color: Colors.white, size: 32),
-              onPressed: _switchCamera,
+              onPressed: controller.switchCamera,
             ),
           ),
-
-          // Overlay Frame Scan Mata
           Positioned.fill(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -134,18 +93,13 @@ class _EyeScannerScreenState extends State<EyeScannerScreen> {
                         child: IconButton(
                           icon: const Icon(Icons.image,
                               color: Colors.white, size: 32),
-                          onPressed: _pickImageFromGallery,
+                          onPressed: controller.pickImageFromGallery,
                         ),
                       ),
                       // Spacer untuk menyesuaikan posisi di tengah
 
                       GestureDetector(
-                        onTap: () async {
-                          final XFile? file = await _controller!.takePicture();
-                          if (file != null) {
-                            print("Foto disimpan di: ${file.path}");
-                          }
-                        },
+                        onTap: controller.takePicture,
                         child: Container(
                           width: 70,
                           height: 70,
@@ -167,4 +121,3 @@ class _EyeScannerScreenState extends State<EyeScannerScreen> {
     );
   }
 }
- */

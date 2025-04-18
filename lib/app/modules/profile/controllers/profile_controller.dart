@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:opticscan/app/routes/app_pages.dart';
 
 class ProfileController extends GetxController {
   // User data observables
@@ -14,6 +15,9 @@ class ProfileController extends GetxController {
   // Status message
   final statusMessage = ''.obs;
   final showSaved = false.obs;
+
+  // Selected index for bottom navigation
+  final selectedIndex = 2.obs; // 2 for profile tab
 
   // Error messages
   final nameError = ''.obs;
@@ -278,9 +282,27 @@ class ProfileController extends GetxController {
     );
   }
 
-  // Logout function
+  // Navigation method for bottom navbar
+  void onItemTapped(int index) {
+    selectedIndex.value = index;
+
+    // Navigate based on the selected index
+    switch (index) {
+      case 0: // Home
+        Get.offAllNamed(Routes.HOME);
+        break;
+      case 1: // Riwayat
+        Get.offAllNamed(Routes.RIWAYAT);
+        break;
+      case 2: // Profile
+        // Already on profile, no need to navigate
+        break;
+    }
+  }
+
+  // Method to handle logout
   void logout() {
-    // Add logout functionality here
-    Get.back();
+    // Implement logout logic here
+    Get.offAllNamed(Routes.LOGIN);
   }
 }

@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
+//SUDAH DI PINDAH DI MODULES HOME
+
+/* import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:opticscan/eye_scanner/eye_scanner_screen.dart';
-import 'package:opticscan/widget/custom_navbar.dart';
+import 'package:opticscan/app/modules/home/views/widget/custom_navbar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -227,3 +229,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+ */

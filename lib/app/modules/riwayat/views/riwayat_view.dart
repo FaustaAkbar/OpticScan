@@ -3,9 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../controllers/riwayat_controller.dart';
 
-// Constants for colors, dimensions, and styles
 class AppStyles {
-  // Colors
   static const Color primaryBlue = Color(0xFF146EF5);
   static const Color backgroundBlue = Color(0xFFF0F5FF);
   static const Color cardBackground = Colors.white;
@@ -21,7 +19,6 @@ class AppStyles {
   static const Color pendingBackground = Color(0xFFF6F6F6);
   static const Color pendingIconColor = Color(0xFFBBBBBB);
 
-  // Dimensions
   static const double cardRadius = 16;
   static const double buttonRadius = 10;
   static const double iconSize = 24;
@@ -29,7 +26,6 @@ class AppStyles {
   static const double smallSpacing = 12;
   static const double largeSpacing = 24;
 
-  // Text Styles
   static const TextStyle headerStyle = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.bold,
@@ -102,7 +98,6 @@ class RiwayatView extends GetView<RiwayatController> {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigation(),
     );
   }
 
@@ -547,52 +542,6 @@ class RiwayatView extends GetView<RiwayatController> {
           fit: BoxFit.cover,
         ),
       ),
-    );
-  }
-
-  Widget _buildBottomNavigation() {
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppStyles.cardBackground,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5,
-            offset: Offset(0, -2),
-          ),
-        ],
-      ),
-      height: 70,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildNavItem(Icons.home_outlined, false),
-          _buildNavItem(Icons.article_outlined, true),
-          _buildNavItem(Icons.person_outline, false),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, bool isSelected) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          icon,
-          color: isSelected ? AppStyles.primaryBlue : Colors.grey,
-          size: 28,
-        ),
-        const SizedBox(height: 4),
-        Container(
-          height: 4,
-          width: 4,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isSelected ? AppStyles.primaryBlue : Colors.transparent,
-          ),
-        ),
-      ],
     );
   }
 }

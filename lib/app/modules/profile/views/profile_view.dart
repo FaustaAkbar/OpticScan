@@ -20,7 +20,6 @@ class ProfileView extends GetView<ProfileController> {
               if (controller.isEditMode.value) _buildEditProfileOverlay(),
             ],
           )),
-      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -452,28 +451,6 @@ class ProfileView extends GetView<ProfileController> {
             ),
           ),
       ],
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      currentIndex: 2, // Profile tab is selected
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.description_outlined),
-          label: 'Documents',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profile',
-        ),
-      ],
-      selectedItemColor: Colors.blue,
-      unselectedItemColor: Colors.grey,
     );
   }
 }

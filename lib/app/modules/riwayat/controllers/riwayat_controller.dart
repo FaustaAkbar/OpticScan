@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:opticscan/app/routes/app_pages.dart';
 
 class ExaminationRecord {
   final String name;
@@ -44,6 +45,9 @@ class ExaminationRecord {
 class RiwayatController extends GetxController {
   // Tab selection
   final selectedTab = 0.obs; // 0 = On Progress, 1 = Selesai
+
+  // Bottom navbar selection
+  final selectedNavIndex = 1.obs; // 1 = Riwayat tab
 
   // Single data source for all examinations
   final allExaminations = <ExaminationRecord>[].obs;
@@ -133,6 +137,24 @@ class RiwayatController extends GetxController {
   // Change tab
   void changeTab(int index) {
     selectedTab.value = index;
+  }
+
+  // Navigation method for bottom navbar
+  void onNavItemTapped(int index) {
+    selectedNavIndex.value = index;
+
+    // Navigate based on the selected index
+    switch (index) {
+      case 0: // Home
+        Get.offAllNamed(Routes.HOME);
+        break;
+      case 1: // Riwayat
+        // Already on riwayat, no need to navigate
+        break;
+      case 2: // Profile
+        Get.offAllNamed(Routes.PROFILE);
+        break;
+    }
   }
 
   // Format date to day of week
