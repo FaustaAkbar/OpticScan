@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:opticscan/app/routes/app_pages.dart';
 import 'package:opticscan/utils/animations/animation.dart';
+import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
 
 import '../controllers/signup_controller.dart';
 
@@ -299,8 +300,7 @@ class SignupView extends GetView<SignupController> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: const CircularProgressIndicator(
-                                color: Colors.white),
+                            child: const ButtonProgressIndicator(size: 22),
                           ),
                           child: ElevatedButton(
                             onPressed: controller.signup,

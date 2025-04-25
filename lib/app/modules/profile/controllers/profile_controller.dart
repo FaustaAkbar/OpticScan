@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:opticscan/app/routes/app_pages.dart';
 import 'package:opticscan/services/user_service.dart';
 import 'package:opticscan/utils/constants/api_constants.dart';
+import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
 
 class ProfileController extends GetxController {
   // User service
@@ -708,14 +709,7 @@ class ProfileController extends GetxController {
                         disabledBackgroundColor: primaryColor.withOpacity(0.6),
                       ),
                       child: isChangingPassword.value
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
+                          ? const ButtonProgressIndicator()
                           : const Text(
                               'Change',
                               style: TextStyle(
@@ -768,25 +762,18 @@ class ProfileController extends GetxController {
                   shape: BoxShape.circle,
                 ),
                 child: Center(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Outer circle
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      // Check mark
-                      const Icon(
-                        Icons.check,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                    ],
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF146EF5),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 36,
+                    ),
                   ),
                 ),
               ),
@@ -794,44 +781,57 @@ class ProfileController extends GetxController {
 
               // Success title
               const Text(
-                'PROFILE UPDATED',
+                'EDIT PROFILE COMPLETE',
                 style: TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w900,
                   color: Colors.black,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
 
               // Success message
               Text(
-                message,
+                'You can now see your account in profile page',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
                 ),
               ),
               const SizedBox(height: 24),
 
               // See My Profile button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Get.back();
-                    // Make sure to reload data after dialog is closed
-                    loadProfileData();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+              Center(
+                child: SizedBox(
+                  width: 219,
+                  height: 29,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Get.back();
+                      // Make sure to reload data after dialog is closed
+                      loadProfileData();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF146EF5),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: const BorderSide(
+                            color: Color(0xFF146EF5), width: 2),
+                      ),
+                    ),
+                    child: const Text(
+                      'See My Profile',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                  child: const Text('OK'),
                 ),
               ),
             ],
@@ -1003,7 +1003,7 @@ class ProfileController extends GetxController {
     // Show loading dialog
     Get.dialog(
       const Center(
-        child: CircularProgressIndicator(),
+        child: StylishProgressIndicator(size: 50),
       ),
       barrierDismissible: false,
     );

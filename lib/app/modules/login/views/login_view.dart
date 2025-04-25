@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:opticscan/app/routes/app_pages.dart';
 import 'package:opticscan/utils/animations/animation.dart';
+import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
 
 import '../controllers/login_controller.dart';
 
@@ -188,9 +189,8 @@ class LoginView extends GetView<LoginController> {
                             child: const SizedBox(
                               height: 20,
                               width: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
+                              child: ButtonProgressIndicator(
+                                size: 20,
                               ),
                             ),
                           ),

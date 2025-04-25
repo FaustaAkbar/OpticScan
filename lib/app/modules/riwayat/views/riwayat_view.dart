@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
 import '../controllers/riwayat_controller.dart';
 
 class AppStyles {
@@ -88,8 +89,12 @@ class RiwayatView extends GetView<RiwayatController> {
               Expanded(
                 child: Obx(() {
                   if (controller.isLoading.value) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
+                    return Center(
+                      child: StylishProgressIndicator(
+                        size: 50,
+                        color: Colors.blue,
+                        hasGlow: true,
+                      ),
                     );
                   }
 
@@ -476,7 +481,10 @@ class RiwayatView extends GetView<RiwayatController> {
                     width: double.infinity,
                     color: Colors.grey.shade200,
                     child: const Center(
-                      child: CircularProgressIndicator(),
+                      child: StylishProgressIndicator(
+                        size: 40,
+                        color: Colors.blue,
+                      ),
                     ),
                   );
                 },
