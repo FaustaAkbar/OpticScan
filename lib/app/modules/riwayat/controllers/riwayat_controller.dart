@@ -2,47 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:opticscan/app/routes/app_pages.dart';
+import 'package:opticscan/services/examination_service.dart';
+import 'package:opticscan/utils/constants/api_constants.dart';
 
 class ExaminationRecord {
-  final String name;
-  final DateTime date;
+  final int examinationId;
+  final int patientId;
+  final int? doctorId;
+  final DateTime examinationDate;
+  final String eyePic;
+  final String? complaints;
+  final String diagnosis;
+  final String? doctorsNote;
   final String status;
-  final String avatarUrl;
-  final String aiDiagnosis;
-  final String doctorDiagnosis;
-  final String doctorName;
-  final String doctorNotes;
-  final String eyeImagePath;
+  final String patientName;
+  final String? doctorName;
 
   ExaminationRecord({
-    required this.name,
-    required this.date,
+    required this.examinationId,
+    required this.patientId,
+    this.doctorId,
+    required this.examinationDate,
+    required this.eyePic,
+    this.complaints,
+    required this.diagnosis,
+    this.doctorsNote,
     required this.status,
-    required this.avatarUrl,
-    this.aiDiagnosis = '',
-    this.doctorDiagnosis = '',
-    this.doctorName = '',
-    this.doctorNotes = '',
-    this.eyeImagePath = 'assets/images/mata.png',
+    required this.patientName,
+    this.doctorName,
   });
 
-  // Factory constructor to create an ExaminationRecord from JSON
+  // Factory constructor to create an ExaminationRecord from backend JSON
   factory ExaminationRecord.fromJson(Map<String, dynamic> json) {
     return ExaminationRecord(
-      name: json['name'],
-      date: DateTime.parse(json['date']),
-      status: json['status'],
-      avatarUrl: json['avatarUrl'] ?? '',
-      aiDiagnosis: json['aiDiagnosis'] ?? '',
-      doctorDiagnosis: json['doctorDiagnosis'] ?? '',
-      doctorName: json['doctorName'] ?? '',
-      doctorNotes: json['doctorNotes'] ?? '',
-      eyeImagePath: json['eyeImagePath'] ?? 'assets/images/mata.png',
+      examinationId: json['examination_id'],
+      patientId: json['patient_id'],
+      doctorId: json['doctor_id'],
+      examinationDate: DateTime.parse(json['examination_date']),
+      eyePic: json['eye_pic'],
+      complaints: json['complaints'],
+      diagnosis: json['diagnosis'],
+      doctorsNote: json['doctors_note'],
+      status: json['status'] == 'ongoing' ? 'On Review' : 'Completed',
+      patientName: json['patient']?['name'] ?? 'Unknown',
+      doctorName: json['doctor']?['name'],
     );
   }
+
+  // Get the full URL for the eye image
+  String get eyeImageUrl => '${ApiConstants.eyeImageBaseUrl}$eyePic';
 }
 
 class RiwayatController extends GetxController {
+  final ExaminationService _examinationService = Get.find<ExaminationService>();
+
   // Tab selection
   final selectedTab = 0.obs; // 0 = On Progress, 1 = Selesai
 
@@ -52,79 +65,49 @@ class RiwayatController extends GetxController {
   // Single data source for all examinations
   final allExaminations = <ExaminationRecord>[].obs;
 
+  // Loading state
+  final isLoading = false.obs;
+
+  // Error state
+  final errorMessage = ''.obs;
+  final hasError = false.obs;
+
   @override
   void onInit() {
     super.onInit();
-    // Load dummy data from JSON
-    loadExaminationsFromJson();
+    // Load real data from backend
+    fetchExaminationRecords();
   }
 
-  // Load examinations from JSON data
-  void loadExaminationsFromJson() {
-    final List<Map<String, dynamic>> examinationsJson = [
-      {
-        'name': 'James Peter',
-        'date': '2025-02-17T13:22:15',
-        'status': 'On Review',
-        'avatarUrl': '',
-        'aiDiagnosis': 'Buta',
-        'eyeImagePath': 'assets/images/mata.png'
-      },
-      {
-        'name': 'Sarah Johnson',
-        'date': '2025-02-15T10:45:30',
-        'status': 'On Review',
-        'avatarUrl': '',
-        'aiDiagnosis': 'Katarak',
-        'eyeImagePath': 'assets/images/mata.png'
-      },
-      {
-        'name': 'Michael Smith',
-        'date': '2025-02-12T09:15:00',
-        'status': 'On Review',
-        'avatarUrl': '',
-        'aiDiagnosis': 'Glaukoma',
-        'eyeImagePath': 'assets/images/mata.png'
-      },
-      {
-        'name': 'Amanda Lee',
-        'date': '2025-01-25T14:30:45',
-        'status': 'Completed',
-        'avatarUrl': '',
-        'aiDiagnosis': 'Buta',
-        'doctorDiagnosis': 'Katarak',
-        'doctorName': 'Dr. Alan Smith',
-        'doctorNotes': 'Banyak Minum Air putih dan istirahat yang cukup',
-        'eyeImagePath': 'assets/images/mata.png'
-      },
-      {
-        'name': 'David Wilson',
-        'date': '2025-01-20T11:10:20',
-        'status': 'Completed',
-        'avatarUrl': '',
-        'aiDiagnosis': 'Katarak',
-        'doctorDiagnosis': 'Katarak',
-        'doctorName': 'Dr. Maria Johnson',
-        'doctorNotes': 'Hindari paparan cahaya kuat dan kontrol rutin',
-        'eyeImagePath': 'assets/images/mata.png'
-      },
-      {
-        'name': 'Jessica Brown',
-        'date': '2025-01-15T16:05:55',
-        'status': 'Completed',
-        'avatarUrl': '',
-        'aiDiagnosis': 'Glaukoma',
-        'doctorDiagnosis': 'Glaukoma',
-        'doctorName': 'Dr. Robert Lee',
-        'doctorNotes': 'Gunakan obat tetes mata secara teratur',
-        'eyeImagePath': 'assets/images/mata.png'
-      }
-    ];
+  // Fetch examination records from backend
+  Future<void> fetchExaminationRecords() async {
+    isLoading.value = true;
+    hasError.value = false;
 
-    // Convert JSON to ExaminationRecord objects
-    allExaminations.value = examinationsJson
-        .map((json) => ExaminationRecord.fromJson(json))
-        .toList();
+    try {
+      final response = await _examinationService.getExaminationResults();
+
+      if (response.success && response.data != null) {
+        // Convert backend data to ExaminationRecord objects
+        final List<dynamic> examinationsData = response.data;
+        allExaminations.value = examinationsData
+            .map((data) => ExaminationRecord.fromJson(data))
+            .toList();
+      } else {
+        hasError.value = true;
+        errorMessage.value = response.message;
+      }
+    } catch (e) {
+      hasError.value = true;
+      errorMessage.value = 'Failed to load examination records';
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Refresh examination records (pull-to-refresh)
+  Future<void> refreshExaminations() async {
+    await fetchExaminationRecords();
   }
 
   // Get filtered examinations based on selected tab

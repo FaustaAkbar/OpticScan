@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:opticscan/app/routes/app_pages.dart';
-import 'package:opticscan/services/api_service.dart';
+import 'package:opticscan/services/user_service.dart';
 import 'package:opticscan/utils/animations/animation.dart';
 
 class LoginController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final ApiService _apiService = ApiService();
+  final UserService _userService = Get.find<UserService>();
 
   // Animation controller for login animations
   late AnimationController animationController;
@@ -80,13 +80,12 @@ class LoginController extends GetxController
 
   Future<void> login() async {
     if (!_validateInputs()) return;
-    isLoading.value = true;
     try {
-      final response = await _apiService.login(
-        email: emailController.text,
-        password: passwordController.text,
+      isLoading.value = true;
+      final response = await _userService.login(
+        emailController.text.trim(),
+        passwordController.text,
       );
-
       if (response.success) {
         _showSuccessMessage(response.message);
         Get.offNamed(Routes.HOME);

@@ -4,27 +4,79 @@ import 'package:get/get.dart';
 
 import '../controllers/profile_controller.dart';
 
+// Define the primary color constant
+const Color primaryColor = Color(0xFF146EF5);
+const Color warnaBackgroundPage = Color(0xFFF2F6FE);
+
 class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Obx(() => Stack(
-            children: [
-              // Main Profile View
-              _buildMainProfileView(),
-
-              // Edit Profile Overlay (shown when isEditMode is true)
-              if (controller.isEditMode.value) _buildEditProfileOverlay(),
-            ],
-          )),
+      backgroundColor: warnaBackgroundPage,
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (controller.hasError.value) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 60,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Error loading profile',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  controller.errorMessage.value,
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => controller.loadProfileData(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          );
+        }
+        return Stack(
+          children: [
+            // Main Profile View
+            _buildMainProfileView(context),
+            // Edit Profile Overlay (shown when isEditMode is true)
+            if (controller.isEditMode.value) _buildEditProfileOverlay(context),
+          ],
+        );
+      }),
     );
   }
 
   // The main profile view with edit button and logout
-  Widget _buildMainProfileView() {
+  Widget _buildMainProfileView(BuildContext context) {
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -48,10 +100,17 @@ class ProfileView extends GetView<ProfileController> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(50),
                   child: Image.network(
-                    'assets/images/image.png',
+                    controller.profileImageUrl,
                     width: 100,
                     height: 100,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      width: 100,
+                      height: 100,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.person,
+                          size: 50, color: Colors.grey),
+                    ),
                   ),
                 ),
               ),
@@ -60,14 +119,23 @@ class ProfileView extends GetView<ProfileController> {
             const SizedBox(height: 8),
 
             // Name below profile picture
-            Obx(() => Text(
-                  controller.name.value,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                )),
+            Text(
+              controller.name.value,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+
+            // User role
+            Text(
+              controller.role.value.capitalize ?? "User",
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
+            ),
 
             const SizedBox(height: 20),
 
@@ -88,8 +156,37 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2196F3),
+                  backgroundColor: primaryColor,
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // Change Password Button
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () => controller.showChangePasswordDialog(),
+                icon: const Icon(
+                  Icons.lock_outline,
+                  color: primaryColor,
+                ),
+                label: const Text(
+                  "CHANGE PASSWORD",
+                  style: TextStyle(
+                    color: primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  side: BorderSide(color: primaryColor),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -118,7 +215,7 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2196F3),
+                  backgroundColor: Colors.red,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -141,13 +238,15 @@ class ProfileView extends GetView<ProfileController> {
         _buildInfoField(
           label: 'Name',
           value: controller.name.value,
+          icon: Icons.person,
         ),
         const SizedBox(height: 16),
 
-        // Age Field (display only)
+        // Birthdate Field (display only)
         _buildInfoField(
-          label: 'Age',
-          value: controller.age.value,
+          label: 'Birthdate',
+          value: controller.formattedBirthdate.value,
+          icon: Icons.cake,
         ),
         const SizedBox(height: 16),
 
@@ -155,14 +254,9 @@ class ProfileView extends GetView<ProfileController> {
         _buildInfoField(
           label: 'Email',
           value: controller.email.value,
+          icon: Icons.email,
         ),
         const SizedBox(height: 16),
-
-        // Password Field (display only)
-        _buildInfoField(
-          label: 'Password',
-          value: controller.password.value,
-        ),
       ],
     );
   }
@@ -171,6 +265,7 @@ class ProfileView extends GetView<ProfileController> {
   Widget _buildInfoField({
     required String label,
     required String value,
+    required IconData icon,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,7 +274,7 @@ class ProfileView extends GetView<ProfileController> {
           label,
           style: const TextStyle(
             fontSize: 16,
-            color: Colors.blue,
+            color: primaryColor,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -188,128 +283,219 @@ class ProfileView extends GetView<ProfileController> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.blue, width: 2),
+            border: Border.all(color: primaryColor, width: 2),
             borderRadius: BorderRadius.circular(30),
             color: Colors.white,
           ),
-          child: Text(
-            value,
-            style: const TextStyle(fontSize: 16),
+          child: Row(
+            children: [
+              Icon(icon, size: 20, color: primaryColor),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  value,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 
-  // The edit profile overlay
-  Widget _buildEditProfileOverlay() {
-    return Container(
-      color: Colors.white,
-      child: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
+  // Edit profile overlay
+  Widget _buildEditProfileOverlay(BuildContext context) {
+    return Positioned.fill(
+      child: Container(
+        color: warnaBackgroundPage,
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Edit Profile",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => controller.cancelEdit(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
 
-              // Profile Picture
-              Center(
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.orange,
-                      width: 3,
+                  // Profile Picture
+                  Center(
+                    child: Stack(
+                      children: [
+                        Obx(() {
+                          if (controller.selectedImage.value != null) {
+                            // Show selected image
+                            return Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.orange,
+                                  width: 3,
+                                ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(60),
+                                child: Image.file(
+                                  controller.selectedImage.value!,
+                                  width: 120,
+                                  height: 120,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          } else {
+                            // Show current profile image
+                            return Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.orange,
+                                  width: 3,
+                                ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(60),
+                                child: Image.network(
+                                  controller.profileImageUrl,
+                                  width: 120,
+                                  height: 120,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Container(
+                                    width: 120,
+                                    height: 120,
+                                    color: Colors.grey[300],
+                                    child: const Icon(Icons.person,
+                                        size: 60, color: Colors.grey),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        }),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: primaryColor,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              onPressed: () => controller.pickImage(),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Image.network(
-                      'assets/images/image.png',
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
+                  const SizedBox(height: 30),
+
+                  // Form for editing profile
+                  _buildEditForm(context),
+
+                  const SizedBox(height: 30),
+
+                  // Save Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: Obx(() => ElevatedButton(
+                          onPressed: controller.showSaved.value ||
+                                  controller.isUpdatingProfile.value
+                              ? null
+                              : () => controller.saveProfile(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryColor,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            disabledBackgroundColor: primaryColor,
+                          ),
+                          child: controller.isUpdatingProfile.value
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  controller.showSaved.value ? "SAVED" : "SAVE",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                        )),
                   ),
-                ),
-              ),
 
-              const SizedBox(height: 8),
+                  const SizedBox(height: 10),
 
-              // Name below profile picture
-              Text(
-                controller.name.value,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              // Profile Form Fields
-              _buildEditForm(),
-
-              const SizedBox(height: 20),
-
-              // Save Button
-              SizedBox(
-                width: double.infinity,
-                child: Obx(() => ElevatedButton(
+                  // Cancel button
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
                       onPressed: controller.showSaved.value
                           ? null
-                          : controller.saveProfile,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2196F3),
+                          : controller.cancelEdit,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.grey.shade700,
+                        side: BorderSide(color: Colors.grey.shade300, width: 1),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        disabledBackgroundColor: Colors.blue,
+                        backgroundColor: Colors.white,
+                        disabledForegroundColor: Colors.grey.shade400,
                       ),
-                      child: Text(
-                        controller.showSaved.value ? "SAVED" : "SAVE",
-                        style: const TextStyle(
-                          color: Colors.white,
+                      child: const Text(
+                        "CANCEL",
+                        style: TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    )),
-              ),
-
-              const SizedBox(height: 10),
-
-              // Cancel button
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed:
-                      controller.showSaved.value ? null : controller.cancelEdit,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.grey.shade700,
-                    side: BorderSide(color: Colors.grey.shade300, width: 1),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    backgroundColor: Colors.white,
-                    disabledForegroundColor: Colors.grey.shade400,
-                  ),
-                  child: const Text(
-                    "CANCEL",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -317,23 +503,20 @@ class ProfileView extends GetView<ProfileController> {
   }
 
   // Form for editing profile
-  Widget _buildEditForm() {
+  Widget _buildEditForm(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Name Field
         _buildEditField(
-          label: 'First Name',
+          label: 'Name',
           controller: controller.nameController,
+          errorText: controller.nameError.value,
         ),
         const SizedBox(height: 16),
 
-        // Age Field
-        _buildEditField(
-          label: 'Age',
-          controller: controller.ageController,
-          keyboardType: TextInputType.number,
-        ),
+        // Birthdate Field
+        _buildBirthdateField(context),
         const SizedBox(height: 16),
 
         // Email Field
@@ -341,15 +524,71 @@ class ProfileView extends GetView<ProfileController> {
           label: 'Email',
           controller: controller.emailController,
           keyboardType: TextInputType.emailAddress,
+          errorText: controller.emailError.value,
         ),
-        const SizedBox(height: 16),
+      ],
+    );
+  }
 
-        // Password Field
-        _buildEditField(
-          label: 'Password',
-          controller: controller.passwordController,
-          isPassword: true,
+  // Birthdate field with date picker
+  Widget _buildBirthdateField(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Birthdate',
+          style: TextStyle(
+            fontSize: 16,
+            color: primaryColor,
+            fontWeight: FontWeight.w500,
+          ),
         ),
+        const SizedBox(height: 6),
+        GestureDetector(
+          onTap: () => controller.selectBirthdate(context),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              border: Border.all(
+                  color: controller.birthdateError.value.isNotEmpty
+                      ? Colors.red
+                      : primaryColor,
+                  width: 2),
+              borderRadius: BorderRadius.circular(30),
+              color: Colors.white,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    controller.formattedBirthdate.value.isEmpty
+                        ? 'Select birthdate'
+                        : controller.formattedBirthdate.value,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: controller.formattedBirthdate.value.isEmpty
+                          ? Colors.grey
+                          : Colors.black,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.calendar_today, size: 20, color: primaryColor),
+              ],
+            ),
+          ),
+        ),
+        if (controller.birthdateError.value.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(left: 16, top: 4),
+            child: Text(
+              controller.birthdateError.value,
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 12,
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -360,30 +599,10 @@ class ProfileView extends GetView<ProfileController> {
     required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
     bool isPassword = false,
+    String errorText = '',
   }) {
-    // Get the correct error message based on the field
-    String errorText = '';
-    Color borderColor = Colors.blue;
-
-    switch (label) {
-      case 'First Name':
-      case 'Name':
-        errorText = this.controller.nameError.value;
-        borderColor = errorText.isNotEmpty ? Colors.red.shade300 : Colors.blue;
-        break;
-      case 'Age':
-        errorText = this.controller.ageError.value;
-        borderColor = errorText.isNotEmpty ? Colors.red.shade300 : Colors.blue;
-        break;
-      case 'Email':
-        errorText = this.controller.emailError.value;
-        borderColor = errorText.isNotEmpty ? Colors.red.shade300 : Colors.blue;
-        break;
-      case 'Password':
-        errorText = this.controller.passwordError.value;
-        borderColor = errorText.isNotEmpty ? Colors.red.shade300 : Colors.blue;
-        break;
-    }
+    final hasError = errorText.isNotEmpty;
+    final borderColor = hasError ? Colors.red : primaryColor;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -439,13 +658,13 @@ class ProfileView extends GetView<ProfileController> {
             ],
           ),
         ),
-        if (errorText.isNotEmpty)
+        if (hasError)
           Padding(
             padding: const EdgeInsets.only(top: 4, left: 16),
             child: Text(
               errorText,
-              style: TextStyle(
-                color: Colors.red.shade600,
+              style: const TextStyle(
+                color: Colors.red,
                 fontSize: 12,
               ),
             ),

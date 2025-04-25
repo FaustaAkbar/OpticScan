@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:opticscan/app/routes/app_pages.dart';
-import 'package:opticscan/services/api_service.dart';
+import 'package:opticscan/services/user_service.dart';
 import 'package:opticscan/utils/animations/animation.dart';
 
 class SignupController extends GetxController
@@ -15,7 +15,7 @@ class SignupController extends GetxController
   late AnimationController animationController;
 
   // Services
-  final ApiService _apiService = ApiService();
+  final UserService _userService = Get.find<UserService>();
 
   // Observable states
   final isLoading = false.obs;
@@ -160,7 +160,7 @@ class SignupController extends GetxController
     isLoading.value = true;
 
     try {
-      final response = await _apiService.register(
+      final response = await _userService.register(
         name: nameController.text.trim(),
         email: emailController.text.trim(),
         password: passwordController.text,

@@ -86,13 +86,81 @@ class RiwayatView extends GetView<RiwayatController> {
 
               // Examination history cards
               Expanded(
-                child: Obx(() => ListView.builder(
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (controller.hasError.value) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Failed to load data',
+                            style: AppStyles.cardTitleStyle,
+                          ),
+                          Text(
+                            controller.errorMessage.value,
+                            style: AppStyles.detailLabelStyle,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: controller.refreshExaminations,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppStyles.primaryBlue,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  if (controller.filteredExaminations.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.history,
+                            size: 80,
+                            color: Colors.grey[300],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No examination records found',
+                            style: AppStyles.cardTitleStyle,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            controller.selectedTab.value == 0
+                                ? 'You have no ongoing examinations'
+                                : 'You have no completed examinations',
+                            style: AppStyles.detailLabelStyle,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return RefreshIndicator(
+                    onRefresh: controller.refreshExaminations,
+                    child: ListView.builder(
                       itemCount: controller.filteredExaminations.length,
                       itemBuilder: (context, index) {
                         return _buildExaminationCard(
                             controller.filteredExaminations[index], context);
                       },
-                    )),
+                    ),
+                  );
+                }),
               ),
             ],
           ),
@@ -181,7 +249,8 @@ class RiwayatView extends GetView<RiwayatController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text(examination.name, style: AppStyles.cardTitleStyle),
+                        Text(examination.patientName,
+                            style: AppStyles.cardTitleStyle),
                         _buildStatusPill(isCompleted, examination.status),
                       ],
                     ),
@@ -229,45 +298,39 @@ class RiwayatView extends GetView<RiwayatController> {
   // Date info box
   Widget _buildDateInfoBox(ExaminationRecord examination) {
     return Container(
+      padding: AppStyles.smallPadding,
       decoration: BoxDecoration(
-        border: Border.all(color: AppStyles.primaryBlue),
-        borderRadius: BorderRadius.circular(8),
+        color: AppStyles.backgroundBlue,
+        borderRadius: BorderRadius.circular(10),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildDateItem(Icons.calendar_today,
-                controller.getDayOfWeek(examination.date)),
-            _buildDateItem(
-                Icons.access_time, controller.formatDate(examination.date)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Date item with icon
-  Widget _buildDateItem(IconData icon, String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
+          const Icon(
+            Icons.calendar_today_outlined,
             color: AppStyles.primaryBlue,
-            size: 18,
+            size: 20,
           ),
-          const SizedBox(width: 8),
-          Text(
-            text,
-            style: const TextStyle(
-              color: AppStyles.primaryBlue,
-              fontWeight: FontWeight.w600,
-              fontSize: 12,
-            ),
+          SizedBox(width: AppStyles.smallSpacing),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                controller.getDayOfWeek(examination.examinationDate),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppStyles.textMedium,
+                ),
+              ),
+              Text(
+                controller.formatDate(examination.examinationDate),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppStyles.textDark,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -279,255 +342,284 @@ class RiwayatView extends GetView<RiwayatController> {
       BuildContext context, ExaminationRecord examination) {
     final isCompleted = examination.status == "Completed";
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
           ),
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.85,
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.8,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with close button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Examination Details',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
             ),
-            decoration: BoxDecoration(
-              color: AppStyles.cardBackground,
-              borderRadius: BorderRadius.circular(20),
+            const SizedBox(height: 16),
+
+            // Patient name and status
+            Row(
+              children: [
+                _buildAvatarWithSmile(size: 50),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        examination.patientName,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: isCompleted
+                              ? AppStyles.completedGreen.withOpacity(0.1)
+                              : AppStyles.pendingYellow.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          examination.status,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: isCompleted
+                                ? AppStyles.completedGreen
+                                : AppStyles.pendingYellow,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Status icon
-                    isCompleted ? _buildCompletedIcon() : _buildPendingIcon(),
-                    SizedBox(height: AppStyles.spacing),
+            const SizedBox(height: 16),
 
-                    // Eye image
-                    _buildEyeImage(examination.eyeImagePath),
-                    const SizedBox(height: 25),
+            // Divider
+            Container(
+              height: 1,
+              color: Colors.grey.shade200,
+            ),
+            const SizedBox(height: 16),
 
-                    // Divider
-                    Divider(
-                        color: AppStyles.dividerColor, thickness: 1, height: 1),
-                    const SizedBox(height: 25),
+            // Date
+            Row(
+              children: [
+                const Icon(
+                  Icons.calendar_today_outlined,
+                  color: AppStyles.primaryBlue,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${controller.getDayOfWeek(examination.examinationDate)}, ${controller.formatDate(examination.examinationDate)}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
 
-                    // Diagnosis information
-                    isCompleted
-                        ? _buildDiagnosisRow(
-                            'Diagnosis by Doctor', examination.doctorDiagnosis)
-                        : _buildDiagnosisRow(
-                            'Early Diagnosis by AI', examination.aiDiagnosis),
-                    SizedBox(height: AppStyles.smallSpacing),
-
-                    // Information rows
-                    _buildInfoRow('Tanggal Registrasi',
-                        _formatDateTime(examination.date)),
-                    SizedBox(height: AppStyles.smallSpacing),
-
-                    _buildInfoRow(
-                      'Status',
-                      isCompleted ? 'completed' : 'On going',
-                      valueColor: isCompleted
-                          ? AppStyles.completedGreen
-                          : AppStyles.pendingYellow,
+            // Eye scan image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.network(
+                examination.eyeImageUrl,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  height: 200,
+                  width: double.infinity,
+                  color: Colors.grey.shade200,
+                  child: const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      size: 50,
+                      color: Colors.grey,
                     ),
-                    SizedBox(height: AppStyles.smallSpacing),
-
-                    // Dashed divider
-                    CustomPaint(
-                      size: const Size(double.infinity, 1),
-                      painter: DashedLinePainter(),
+                  ),
+                ),
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    height: 200,
+                    width: double.infinity,
+                    color: Colors.grey.shade200,
+                    child: const Center(
+                      child: CircularProgressIndicator(),
                     ),
-                    SizedBox(height: AppStyles.smallSpacing),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
 
-                    // Doctor information
-                    _buildInfoRow('Nama Dokter',
-                        isCompleted ? examination.doctorName : '-----'),
-                    SizedBox(height: AppStyles.smallSpacing),
-
-                    // Doctor notes
-                    isCompleted
-                        ? _buildCenteredDoctorNotes(examination.doctorNotes)
-                        : _buildInfoRow('Catatan dokter', '-----'),
-
-                    SizedBox(height: AppStyles.largeSpacing),
-
-                    // Back button
-                    _buildBackButton(context),
-                  ],
+            // AI Diagnosis
+            const Text(
+              'AI Diagnosis',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Colors.grey.shade200,
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                examination.diagnosis,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppStyles.textDark,
                 ),
               ),
             ),
-          ),
-        );
-      },
-    );
-  }
+            const SizedBox(height: 16),
 
-  // Completed status icon
-  Widget _buildCompletedIcon() {
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: AppStyles.successBackground,
-      ),
-      alignment: Alignment.center,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          color: AppStyles.successGreen,
-        ),
-        alignment: Alignment.center,
-        child: const Icon(
-          Icons.check,
-          color: Colors.white,
-          size: AppStyles.iconSize,
-        ),
-      ),
-    );
-  }
+            // Complaints (if any)
+            if (examination.complaints != null &&
+                examination.complaints!.isNotEmpty) ...[
+              const Text(
+                'Patient Complaints',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.grey.shade200,
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  examination.complaints!,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppStyles.textDark,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
 
-  // Pending status icon
-  Widget _buildPendingIcon() {
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: AppStyles.pendingBackground,
-      ),
-      alignment: Alignment.center,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
+            // Doctor's diagnosis and notes (if status is completed)
+            if (examination.status == "Completed") ...[
+              const Text(
+                'Doctor\'s Diagnosis',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.grey.shade200,
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.person,
+                          size: 16,
+                          color: AppStyles.primaryBlue,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          examination.doctorName ?? 'Unknown Doctor',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppStyles.primaryBlue,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    if (examination.doctorsNote != null &&
+                        examination.doctorsNote!.isNotEmpty)
+                      Text(
+                        examination.doctorsNote!,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppStyles.textDark,
+                        ),
+                      )
+                    else
+                      const Text(
+                        'No additional notes from doctor',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontStyle: FontStyle.italic,
+                          color: AppStyles.textLight,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
           ],
         ),
-        alignment: Alignment.center,
-        child: const Icon(
-          Icons.schedule,
-          color: AppStyles.pendingIconColor,
-          size: AppStyles.iconSize,
-        ),
       ),
     );
   }
 
-  // Eye image
-  Widget _buildEyeImage(String imagePath) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
-      child: Image.asset(
-        imagePath,
-        width: 222,
-        height: 172,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-
-  // Diagnosis row with highlight
-  Widget _buildDiagnosisRow(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: AppStyles.detailLabelStyle),
-        Text(value, style: AppStyles.detailHighlightStyle),
-      ],
-    );
-  }
-
-  // Information row
-  Widget _buildInfoRow(String label, String value, {Color? valueColor}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: AppStyles.detailLabelStyle),
-        Flexible(
-          child: Text(
-            value,
-            style: AppStyles.detailValueStyle.copyWith(
-              color: valueColor ?? AppStyles.textDark,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Centered doctor notes for completed status
-  Widget _buildCenteredDoctorNotes(String notes) {
-    return Column(
-      children: [
-        const SizedBox(height: 4),
-        Text(
-          'Catatan dokter',
-          style: AppStyles.detailLabelStyle.copyWith(
-            fontWeight: FontWeight.w400,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          notes,
-          style: AppStyles.detailValueStyle,
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-
-  // Back button
-  Widget _buildBackButton(BuildContext context) {
-    return SizedBox(
-      width: 150,
-      child: ElevatedButton(
-        onPressed: () => Navigator.of(context).pop(),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppStyles.primaryBlue,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppStyles.buttonRadius),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 12),
-        ),
-        child: const Text(
-          'Kembali',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
-
-  String _formatDateTime(DateTime date) {
-    final DateFormat formatter = DateFormat('dd-MM-yyyy, HH:mm:ss');
-    return formatter.format(date);
-  }
-
-  Widget _buildAvatarWithSmile() {
+  Widget _buildAvatarWithSmile({double size = 58}) {
     return Container(
-      width: 58,
-      height: 58,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
@@ -536,7 +628,7 @@ class RiwayatView extends GetView<RiwayatController> {
         ),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(size / 2),
         child: Image.asset(
           'assets/images/image.png',
           fit: BoxFit.cover,
@@ -544,27 +636,4 @@ class RiwayatView extends GetView<RiwayatController> {
       ),
     );
   }
-}
-
-// Painter for drawing dashed lines
-class DashedLinePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    double dashWidth = 5, dashSpace = 3, startX = 0;
-    final paint = Paint()
-      ..color = AppStyles.dividerColor
-      ..strokeWidth = 1;
-
-    while (startX < size.width) {
-      canvas.drawLine(
-        Offset(startX, 0),
-        Offset(startX + dashWidth, 0),
-        paint,
-      );
-      startX += dashWidth + dashSpace;
-    }
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
