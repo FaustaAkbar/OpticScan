@@ -455,31 +455,50 @@ class ApiService {
         if (birthdate != null) 'birthdate': birthdate,
       };
 
+      print('Sending profile update with data: $data');
+
       final response = await _dio.patch(
         ApiConstants.updateUserProfileEndpoint,
         data: data,
+        options: Options(
+          validateStatus: (status) => status! < 500,
+          receiveTimeout: const Duration(seconds: 20),
+        ),
       );
+
+      print(
+          'Profile update response: ${response.statusCode} - ${response.data}');
 
       if (response.statusCode == 200) {
         return ApiResponse(
           success: true,
-          message: response.data['message'] ?? 'Profile updated successfully',
+          message: response.data['message'] ?? 'Profil berhasil diperbarui',
         );
       } else {
         return ApiResponse(
           success: false,
-          message: response.data['message'] ?? 'Failed to update profile',
+          message: response.data['message'] ?? 'Gagal memperbarui profil',
         );
       }
     } on DioException catch (e) {
+      print('DioException in updateUserProfile: ${e.message}');
+      print('DioException type: ${e.type}');
+      if (e.response != null) {
+        print('Error response data: ${e.response?.data}');
+        return ApiResponse(
+          success: false,
+          message: e.response?.data?['message'] ?? 'Gagal memperbarui profil',
+        );
+      }
       return ApiResponse(
         success: false,
-        message: e.response?.data?['message'] ?? 'Failed to update profile',
+        message: 'Tidak dapat terhubung ke server',
       );
     } catch (e) {
+      print('Unexpected error in updateUserProfile: $e');
       return ApiResponse(
         success: false,
-        message: 'An unexpected error occurred',
+        message: 'Terjadi kesalahan yang tidak terduga',
       );
     }
   }
@@ -490,34 +509,51 @@ class ApiService {
     required String newPassword,
   }) async {
     try {
+      print('Sending change password request...');
+
       final response = await _dio.patch(
         ApiConstants.changePasswordEndpoint,
         data: {
           'oldPassword': oldPassword,
           'newPassword': newPassword,
         },
+        options: Options(
+          validateStatus: (status) => status! < 500,
+        ),
       );
+
+      print(
+          'Password change response: ${response.statusCode} - ${response.data}');
 
       if (response.statusCode == 200) {
         return ApiResponse(
           success: true,
-          message: response.data['message'] ?? 'Password changed successfully',
+          message: response.data['message'] ?? 'Password berhasil diubah',
         );
       } else {
         return ApiResponse(
           success: false,
-          message: response.data['message'] ?? 'Failed to change password',
+          message: response.data['message'] ?? 'Gagal mengubah password',
         );
       }
     } on DioException catch (e) {
+      print('DioException in changePassword: ${e.message}');
+      if (e.response != null) {
+        print('Error response data: ${e.response?.data}');
+        return ApiResponse(
+          success: false,
+          message: e.response?.data?['message'] ?? 'Gagal mengubah password',
+        );
+      }
       return ApiResponse(
         success: false,
-        message: e.response?.data?['message'] ?? 'Failed to change password',
+        message: 'Tidak dapat terhubung ke server',
       );
     } catch (e) {
+      print('Unexpected error in changePassword: $e');
       return ApiResponse(
         success: false,
-        message: 'An unexpected error occurred',
+        message: 'Terjadi kesalahan yang tidak terduga',
       );
     }
   }

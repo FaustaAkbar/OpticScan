@@ -139,9 +139,26 @@ class UserService extends GetxService {
   // Fetch current user data
   Future<void> _fetchUserData() async {
     try {
-      final response = await _apiService.getCurrentUser();
+      print('Fetching updated user data');
+      final response = await _apiService.getUserProfile();
       if (response.success && response.data != null) {
+        print('Successfully received updated user data: ${response.data}');
         userData.value = response.data;
+
+        // Update specific fields that might have changed
+        if (userData.value.containsKey('name')) {
+          print('Updating name to: ${userData.value['name']}');
+        }
+
+        if (userData.value.containsKey('email')) {
+          print('Updating email to: ${userData.value['email']}');
+        }
+
+        if (userData.value.containsKey('profile_pic')) {
+          print('Updating profile pic to: ${userData.value['profile_pic']}');
+        }
+      } else {
+        print('Failed to fetch user data: ${response.message}');
       }
     } catch (e) {
       print('Error fetching user data: $e');

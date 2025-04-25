@@ -423,8 +423,274 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                   const SizedBox(height: 30),
 
-                  // Form for editing profile
-                  _buildEditForm(context),
+                  // Direct Form Fields
+                  // Name Field
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Name',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: controller.nameError.value.isNotEmpty
+                              ? Colors.red
+                              : primaryColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      TextFormField(
+                        controller: controller.nameController,
+                        enabled: !controller.showSaved.value,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: controller.nameError.value.isNotEmpty
+                                  ? Colors.red
+                                  : primaryColor,
+                              width: 2,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: controller.nameError.value.isNotEmpty
+                                  ? Colors.red
+                                  : primaryColor,
+                              width: 2,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: controller.nameError.value.isNotEmpty
+                                  ? Colors.red
+                                  : primaryColor,
+                              width: 2,
+                            ),
+                          ),
+                          hintText: 'Enter your name',
+                          hintStyle: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          suffixIcon: Icon(
+                            Icons.edit_outlined,
+                            color: controller.nameError.value.isNotEmpty
+                                ? Colors.red
+                                : primaryColor,
+                            size: 20,
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Name is required';
+                          }
+                          return null;
+                        },
+                      ),
+                      if (controller.nameError.value.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4, left: 16),
+                          child: Text(
+                            controller.nameError.value,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Birthdate Field
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Birthdate',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: primaryColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      TextFormField(
+                        readOnly: true,
+                        controller: TextEditingController(
+                            text: controller.formattedBirthdate.value),
+                        enabled: !controller.showSaved.value,
+                        onTap: () => controller.selectBirthdate(context),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: controller.birthdateError.value.isNotEmpty
+                                  ? Colors.red
+                                  : primaryColor,
+                              width: 2,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: controller.birthdateError.value.isNotEmpty
+                                  ? Colors.red
+                                  : primaryColor,
+                              width: 2,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: controller.birthdateError.value.isNotEmpty
+                                  ? Colors.red
+                                  : primaryColor,
+                              width: 2,
+                            ),
+                          ),
+                          hintText: 'Select birthdate',
+                          hintStyle: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          suffixIcon: const Icon(Icons.calendar_today,
+                              size: 20, color: primaryColor),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Birthdate is required';
+                          }
+                          return null;
+                        },
+                      ),
+                      if (controller.birthdateError.value.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, top: 4),
+                          child: Text(
+                            controller.birthdateError.value,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Email Field
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Email',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: controller.emailError.value.isNotEmpty
+                              ? Colors.red
+                              : primaryColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      TextFormField(
+                        controller: controller.emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        enabled: !controller.showSaved.value,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: controller.emailError.value.isNotEmpty
+                                  ? Colors.red
+                                  : primaryColor,
+                              width: 2,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: controller.emailError.value.isNotEmpty
+                                  ? Colors.red
+                                  : primaryColor,
+                              width: 2,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: controller.emailError.value.isNotEmpty
+                                  ? Colors.red
+                                  : primaryColor,
+                              width: 2,
+                            ),
+                          ),
+                          hintText: 'Enter your email',
+                          hintStyle: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          suffixIcon: Icon(
+                            Icons.edit_outlined,
+                            color: controller.emailError.value.isNotEmpty
+                                ? Colors.red
+                                : primaryColor,
+                            size: 20,
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Email is required';
+                          } else if (!GetUtils.isEmail(value)) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
+                      if (controller.emailError.value.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4, left: 16),
+                          child: Text(
+                            controller.emailError.value,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
 
                   const SizedBox(height: 30),
 
@@ -499,177 +765,6 @@ class ProfileView extends GetView<ProfileController> {
           ),
         ),
       ),
-    );
-  }
-
-  // Form for editing profile
-  Widget _buildEditForm(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Name Field
-        _buildEditField(
-          label: 'Name',
-          controller: controller.nameController,
-          errorText: controller.nameError.value,
-        ),
-        const SizedBox(height: 16),
-
-        // Birthdate Field
-        _buildBirthdateField(context),
-        const SizedBox(height: 16),
-
-        // Email Field
-        _buildEditField(
-          label: 'Email',
-          controller: controller.emailController,
-          keyboardType: TextInputType.emailAddress,
-          errorText: controller.emailError.value,
-        ),
-      ],
-    );
-  }
-
-  // Birthdate field with date picker
-  Widget _buildBirthdateField(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Birthdate',
-          style: TextStyle(
-            fontSize: 16,
-            color: primaryColor,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 6),
-        GestureDetector(
-          onTap: () => controller.selectBirthdate(context),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              border: Border.all(
-                  color: controller.birthdateError.value.isNotEmpty
-                      ? Colors.red
-                      : primaryColor,
-                  width: 2),
-              borderRadius: BorderRadius.circular(30),
-              color: Colors.white,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    controller.formattedBirthdate.value.isEmpty
-                        ? 'Select birthdate'
-                        : controller.formattedBirthdate.value,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: controller.formattedBirthdate.value.isEmpty
-                          ? Colors.grey
-                          : Colors.black,
-                    ),
-                  ),
-                ),
-                const Icon(Icons.calendar_today, size: 20, color: primaryColor),
-              ],
-            ),
-          ),
-        ),
-        if (controller.birthdateError.value.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(left: 16, top: 4),
-            child: Text(
-              controller.birthdateError.value,
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 12,
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  // Editable field with edit icon
-  Widget _buildEditField({
-    required String label,
-    required TextEditingController controller,
-    TextInputType keyboardType = TextInputType.text,
-    bool isPassword = false,
-    String errorText = '',
-  }) {
-    final hasError = errorText.isNotEmpty;
-    final borderColor = hasError ? Colors.red : primaryColor;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 16,
-            color: borderColor,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: borderColor, width: 2),
-            borderRadius: BorderRadius.circular(30),
-            color: Colors.white,
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  obscureText: isPassword,
-                  keyboardType: keyboardType,
-                  enabled: !this.controller.showSaved.value,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    border: InputBorder.none,
-                    hintText: 'Enter your ${label.toLowerCase()}',
-                    hintStyle: TextStyle(
-                      color: Colors.grey.shade400,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(right: 10),
-                child: Icon(
-                  Icons.edit_outlined,
-                  color: borderColor,
-                  size: 20,
-                ),
-              ),
-            ],
-          ),
-        ),
-        if (hasError)
-          Padding(
-            padding: const EdgeInsets.only(top: 4, left: 16),
-            child: Text(
-              errorText,
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 12,
-              ),
-            ),
-          ),
-      ],
     );
   }
 }
