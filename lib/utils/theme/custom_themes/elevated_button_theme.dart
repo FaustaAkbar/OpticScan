@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:opticscan/utils/constants/color.dart';
 
 class OElevatedButtonTheme {
   OElevatedButtonTheme._();
 
   static final elevatedButtonTheme = ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFF146EF5),
+      backgroundColor: primaryColor,
       foregroundColor: Colors.white,
       minimumSize: const Size(double.infinity, 50),
       shape: RoundedRectangleBorder(

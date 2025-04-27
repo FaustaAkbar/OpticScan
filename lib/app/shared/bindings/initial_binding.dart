@@ -3,20 +3,20 @@ import 'package:opticscan/services/api_service.dart';
 import 'package:opticscan/services/examination_service.dart';
 import 'package:opticscan/services/user_service.dart';
 
-/// This binding is executed before any route is loaded
+/// ========= binding awal =========
 class InitialBinding extends Bindings {
   @override
   void dependencies() {
-    // Initialize API Service first
+    // inisialisasi service API
     Get.put(ApiService(), permanent: true);
 
-    // Initialize UserService as a global service that persists throughout the app lifecycle
+    // inisialisasi service User
     Get.putAsync<UserService>(
       () => UserService().init(),
-      permanent: true, // Keep it alive throughout the app
+      permanent: true,
     );
 
-    // Initialize ExaminationService
+    // inisialisasi service Examination
     Get.putAsync<ExaminationService>(
       () => ExaminationService().init(),
       permanent: true,

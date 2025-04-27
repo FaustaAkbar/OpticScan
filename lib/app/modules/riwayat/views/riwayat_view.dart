@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+import 'package:opticscan/utils/constants/color.dart';
 import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
 import '../controllers/riwayat_controller.dart';
 
 class AppStyles {
-  static const Color primaryBlue = Color(0xFF146EF5);
+  static const Color primaryBlue = primaryColor;
   static const Color backgroundBlue = Color(0xFFF0F5FF);
   static const Color cardBackground = Colors.white;
-  static const Color textDark = Color(0xFF333333);
-  static const Color textMedium = Color(0xFF666666);
-  static const Color textLight = Color(0xFFA8A09E);
   static const Color completedGreen = Color(0xFF23A26D);
   static const Color pendingYellow = Color(0xFFFFC817);
   static const Color tabBackground = Color(0xFFF2F2F2);
@@ -19,6 +16,9 @@ class AppStyles {
   static const Color successBackground = Color(0xFFEAF7F2);
   static const Color pendingBackground = Color(0xFFF6F6F6);
   static const Color pendingIconColor = Color(0xFFBBBBBB);
+  static const Color textDark = Color(0xFF333333);
+  static const Color textMedium = Color(0xFF666666);
+  static const Color textLight = Color(0xFFA8A09E);
 
   static const double cardRadius = 16;
   static const double buttonRadius = 10;
@@ -77,15 +77,10 @@ class RiwayatView extends GetView<RiwayatController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Header
               Text('Riwayat Pemeriksaan', style: AppStyles.headerStyle),
               SizedBox(height: AppStyles.spacing),
-
-              // Tab selector
               _buildTabSelector(),
               SizedBox(height: AppStyles.spacing),
-
-              // Examination history cards
               Expanded(
                 child: Obx(() {
                   if (controller.isLoading.value) {
@@ -174,7 +169,7 @@ class RiwayatView extends GetView<RiwayatController> {
     );
   }
 
-  // Tab selector widget
+  // ========= widget untuk memilih tab =========
   Widget _buildTabSelector() {
     return Container(
       height: 50,
@@ -191,7 +186,7 @@ class RiwayatView extends GetView<RiwayatController> {
     );
   }
 
-  // Individual tab item
+  // ========= widget untuk item tab =========
   Widget _buildTabItem(int tabIndex, String title) {
     final isSelected = controller.selectedTab.value == tabIndex;
     return Expanded(
@@ -217,7 +212,7 @@ class RiwayatView extends GetView<RiwayatController> {
     );
   }
 
-  // Examination card
+  // ========= widget untuk kartu pemeriksaan =========
   Widget _buildExaminationCard(
       ExaminationRecord examination, BuildContext context) {
     final isCompleted = examination.status == "Completed";
@@ -242,13 +237,10 @@ class RiwayatView extends GetView<RiwayatController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // User info and status row
               Row(
                 children: [
                   _buildAvatarWithSmile(),
                   SizedBox(width: AppStyles.smallSpacing),
-
-                  // Name and status
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,10 +254,7 @@ class RiwayatView extends GetView<RiwayatController> {
                   ),
                 ],
               ),
-
               SizedBox(height: AppStyles.spacing),
-
-              // Date info
               _buildDateInfoBox(examination),
             ],
           ),
@@ -274,7 +263,7 @@ class RiwayatView extends GetView<RiwayatController> {
     );
   }
 
-  // Status pill widget
+  // ========= widget untuk pill status =========
   Widget _buildStatusPill(bool isCompleted, String status) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -300,7 +289,7 @@ class RiwayatView extends GetView<RiwayatController> {
     );
   }
 
-  // Date info box
+  // ========= widget untuk kotak info tanggal =========
   Widget _buildDateInfoBox(ExaminationRecord examination) {
     return Container(
       padding: AppStyles.smallPadding,
@@ -342,7 +331,7 @@ class RiwayatView extends GetView<RiwayatController> {
     );
   }
 
-  // Examination details popup
+  // ========= popup detail pemeriksaan =========
   void _showExaminationDetailsPopup(
       BuildContext context, ExaminationRecord examination) {
     final isCompleted = examination.status == "Completed";
@@ -364,7 +353,7 @@ class RiwayatView extends GetView<RiwayatController> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with close button
+            // header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -383,7 +372,7 @@ class RiwayatView extends GetView<RiwayatController> {
             ),
             const SizedBox(height: 16),
 
-            // Patient name and status
+            // Nama pasien dan status
             Row(
               children: [
                 _buildAvatarWithSmile(size: 50),
@@ -434,7 +423,7 @@ class RiwayatView extends GetView<RiwayatController> {
             ),
             const SizedBox(height: 16),
 
-            // Date
+            // Tanggal
             Row(
               children: [
                 const Icon(
@@ -454,7 +443,7 @@ class RiwayatView extends GetView<RiwayatController> {
             ),
             const SizedBox(height: 16),
 
-            // Eye scan image
+            // Gambar pemeriksaan mata
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.network(
@@ -521,7 +510,7 @@ class RiwayatView extends GetView<RiwayatController> {
             ),
             const SizedBox(height: 16),
 
-            // Complaints (if any)
+            // Keluhan (jika ada)
             if (examination.complaints != null &&
                 examination.complaints!.isNotEmpty) ...[
               const Text(
@@ -553,7 +542,7 @@ class RiwayatView extends GetView<RiwayatController> {
               const SizedBox(height: 16),
             ],
 
-            // Doctor's diagnosis and notes (if status is completed)
+            // Diagnosa dokter dan catatan (jika status selesai)
             if (examination.status == "Completed") ...[
               const Text(
                 'Doctor\'s Diagnosis',

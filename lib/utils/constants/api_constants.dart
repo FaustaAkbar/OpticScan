@@ -3,34 +3,38 @@
 class ApiConstants {
   // Base URLs
   static const String baseUrlEmulator =
-      'https://ws1qtsds-4000.asse.devtunnels.ms';
+      'https://ws1qtsds-4000.asse.devtunnels.ms'; // nanti ganti dengan base url server
 
   // Auth endpoints
-  static const String loginEndpoint = '/auth/login';
-  static const String registerEndpoint = '/auth/register';
-  static const String logoutEndpoint = '/auth/logout';
-  static const String refreshEndpoint = '/auth/refresh';
-  static const String userInfoEndpoint = '/auth/me';
+  static const String loginEndpoint = '/auth/login'; // POST
+  static const String registerEndpoint = '/auth/register'; // POST
+  static const String logoutEndpoint = '/auth/logout'; // GET
+  static const String refreshEndpoint = '/auth/refresh'; // GET
+  static const String userInfoEndpoint = '/auth/me'; // GET
 
   // Examination endpoints
-  static const String getExamResultsEndpoint = '/exam/my-result';
-  static const String submitExamEndpoint = '/exam/submit-exam';
-  static const String diagnosisDokterEndpoint = '/exam/diagnosis-dokter';
+  static const String getExamResultsEndpoint = '/exam/my-result'; // GET
+  static const String submitExamEndpoint =
+      '/exam/submit-exam'; // POST (dengan file upload)
+  static const String diagnosisDokterEndpoint =
+      '/exam/diagnosis-dokter'; // POST
 
   // Profile endpoints
-  static const String getUserProfileEndpoint = '/user/profile';
-  static const String updateUserProfileEndpoint = '/user/profile';
-  static const String changePasswordEndpoint = '/user/change-password';
-  static const String changeProfilePicEndpoint = '/user/change-profile-pic';
+  static const String getUserProfileEndpoint = '/user/profile'; // GET
+  static const String updateUserProfileEndpoint = '/user/profile'; // PATCH
+  static const String changePasswordEndpoint = '/user/change-password'; // PATCH
+  static const String changeProfilePicEndpoint =
+      '/user/change-profile-pic'; // PATCH (dengan file upload)
 
-  // Base URLs for images
-  static const String eyeImageBaseUrl =
-      'https://ws1qtsds-4000.asse.devtunnels.ms/images/eye-scans/';
-  static const String profileImageBaseUrl =
-      'https://ws1qtsds-4000.asse.devtunnels.ms/images/profile-pics/';
+  // User statistics endpoints
+  static const String getUsersCountEndpoint = '/user/users-count'; // GET
+
+  // Url untuk images
+  static const String eyeImageBaseUrl = '/images/eye-scans';
+  static const String profileImageBaseUrl = '/images/profile-pics';
   static const String defaultProfileImage = 'blank-profile-pic.png';
 
-  // Storage keys
+  // Simpan keys
   static const String accessTokenKey = 'access_token';
   static const String userRoleKey = 'user_role';
   static const String userIdKey = 'user_id';

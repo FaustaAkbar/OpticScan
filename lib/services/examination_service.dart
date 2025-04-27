@@ -4,12 +4,12 @@ import 'package:opticscan/services/api_service.dart';
 class ExaminationService extends GetxService {
   final ApiService _apiService = Get.find<ApiService>();
 
-  // Get all examination results for the current user
+  // ========= ambil data hasil pemeriksaan =========
   Future<ApiResponse> getExaminationResults() async {
     return await _apiService.getExaminationResults();
   }
 
-  // Submit a new examination
+  // ========= submit pemeriksaan (upload gambar mata) =========
   Future<ApiResponse> submitExamination({
     required String imagePath,
     String? complaints,
@@ -20,7 +20,7 @@ class ExaminationService extends GetxService {
     );
   }
 
-  // Initialize the service
+  // ========= initialize service =========
   Future<ExaminationService> init() async {
     return this;
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:opticscan/app/modules/signup/controllers/signup_controller.dart';
 import 'package:opticscan/app/routes/app_pages.dart';
 import 'package:opticscan/services/user_service.dart';
 import 'package:opticscan/utils/animations/animation.dart';
@@ -9,10 +10,7 @@ class LoginController extends GetxController
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final UserService _userService = Get.find<UserService>();
-
-  // Animation controller for login animations
   late AnimationController animationController;
-
   final isLoading = false.obs;
   final isPasswordVisible = false.obs;
   final emailError = ''.obs;
@@ -22,15 +20,12 @@ class LoginController extends GetxController
   void onInit() {
     super.onInit();
     _setupListeners();
-
-    // Initialize animation controller
     animationController = AnimationController(
       vsync: this,
       duration: AnimationDurations.formEntrance,
     );
-
-    // Start the animation
     animationController.forward();
+    clearFormFields();
   }
 
   void _setupListeners() {
@@ -47,6 +42,27 @@ class LoginController extends GetxController
     });
   }
 
+  void clearFormFields() {
+    emailController.clear();
+    passwordController.clear();
+    emailError.value = '';
+    passwordError.value = '';
+  }
+
+  void resetAnimation() {
+    animationController.reset();
+    animationController.forward();
+  }
+
+  void goToSignup() {
+    clearFormFields();
+    if (Get.isRegistered<SignupController>()) {
+      final signupController = Get.find<SignupController>();
+      signupController.resetAnimation();
+    }
+    Get.offNamed(Routes.SIGNUP);
+  }
+
   @override
   void onClose() {
     emailController.dispose();
@@ -55,14 +71,15 @@ class LoginController extends GetxController
     super.onClose();
   }
 
+  // ========= toggle password visibility =========
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
 
+  // ========= validasi input =========
   bool _validateInputs() {
     bool isValid = true;
-
-    // Validate email
+    // validasi email
     if (emailController.text.isEmpty) {
       emailError.value = 'Email is required';
       isValid = false;
@@ -70,14 +87,16 @@ class LoginController extends GetxController
       emailError.value = 'Please enter a valid email';
       isValid = false;
     }
-    // Validate password
+    // validasi password
     if (passwordController.text.isEmpty) {
       passwordError.value = 'Password is required';
       isValid = false;
     }
+
     return isValid;
   }
 
+  // ========= proses login =========
   Future<void> login() async {
     if (!_validateInputs()) return;
     try {

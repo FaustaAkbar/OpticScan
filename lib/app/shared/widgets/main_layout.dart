@@ -9,9 +9,9 @@ class MainLayout extends StatelessWidget {
   final String currentRoute;
 
   const MainLayout({
-    Key? key,
+    super.key,
     required this.currentRoute,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class MainLayout extends StatelessWidget {
   }
 
   Widget _buildBody() {
-    // UNTUK MENAMPILKAN HALAMAN BERDASARKAN RUTE
+    // untuk menampilkan halaman berdasarkan rute
     switch (currentRoute) {
       case Routes.HOME:
         return const HomeView();
@@ -36,7 +36,7 @@ class MainLayout extends StatelessWidget {
   }
 
   Widget _buildBottomNavBar() {
-    // MENENTUKAN INDEX BERDASARKAN RUTE
+    // Menentukan index berdasarkan rute
     int currentIndex;
 
     switch (currentRoute) {

@@ -8,7 +8,6 @@ class NavBarItem {
   final IconData icon;
   final String route;
   final String label;
-
   NavBarItem({
     required this.icon,
     required this.route,
@@ -19,7 +18,7 @@ class NavBarItem {
 class PersistentBottomNavBar extends StatelessWidget {
   final int currentIndex;
 
-  // RUTE UNTUK BOTTOM NAVBAR
+  // Rute untuk navbar bawah
   static final List<NavBarItem> items = [
     NavBarItem(
       icon: Icons.home_outlined,
@@ -39,9 +38,9 @@ class PersistentBottomNavBar extends StatelessWidget {
   ];
 
   const PersistentBottomNavBar({
-    Key? key,
+    super.key,
     required this.currentIndex,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +62,6 @@ class PersistentBottomNavBar extends StatelessWidget {
           final index = entry.key;
           final item = entry.value;
           final isSelected = index == currentIndex;
-
           return _buildNavItem(
             icon: item.icon,
             isSelected: isSelected,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:opticscan/utils/constants/color.dart';
 
 import '../controllers/splashscreen_controller.dart';
 
@@ -47,13 +48,13 @@ class _SplashContentState extends State<_SplashContent> {
                           width: 80,
                           height: 80,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF146EF5).withAlpha(25),
+                            color: primaryColor.withAlpha(25),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.visibility_outlined,
                             size: 40,
-                            color: Color(0xFF146EF5),
+                            color: primaryColor,
                           ),
                         ),
                       );
@@ -105,14 +106,13 @@ class _SplashContentState extends State<_SplashContent> {
                                               ? FontWeight.bold
                                               : FontWeight.w500,
                                           color: isHighlighted
-                                              ? const Color(0xFF146EF5)
+                                              ? primaryColor
                                               : Colors.black87,
                                           decoration: isHighlighted
                                               ? TextDecoration.underline
                                               : null,
                                           decorationColor: isHighlighted
-                                              ? const Color(0xFF146EF5)
-                                                  .withAlpha(76)
+                                              ? primaryColor.withAlpha(76)
                                               : null,
                                           decorationThickness:
                                               isHighlighted ? 2 : null,

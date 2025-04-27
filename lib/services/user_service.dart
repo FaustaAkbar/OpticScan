@@ -7,44 +7,40 @@ import 'package:opticscan/utils/constants/api_constants.dart';
 
 class UserService extends GetxService {
   final ApiService _apiService = ApiService();
-
   final RxBool isLoggedIn = false.obs;
   final RxString userRole = ''.obs;
   final RxMap<String, dynamic> userData = <String, dynamic>{}.obs;
 
-  // Initialize the service, check if user is already logged in
   Future<UserService> init() async {
     await checkAuthStatus();
     return this;
   }
 
-  // Check if user is authenticated
+  // ========= cek apakah user sudah login =========
   Future<bool> checkAuthStatus() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString(ApiConstants.accessTokenKey);
-
       if (token == null) {
         _resetAuthState();
         return false;
       }
 
-      // Check if token is expired
+      // cek apakah token sudah expired
       if (JwtDecoder.isExpired(token)) {
-        // Try to refresh token
+        // coba refresh token
         final refreshed = await _refreshToken();
         if (!refreshed) {
           _resetAuthState();
           return false;
         }
       }
-
-      // Get saved role or fetch current user
+      // ambil role yang disimpan atau ambil data user
       final savedRole = prefs.getString(ApiConstants.userRoleKey);
       if (savedRole != null) {
         userRole.value = savedRole;
       } else {
-        // Fetch user data if role not found
+        // ambil data user jika role tidak ditemukan
         final response = await _apiService.getCurrentUser();
         if (response.success && response.data != null) {
           userData.value = response.data;
@@ -52,7 +48,6 @@ class UserService extends GetxService {
           await prefs.setString(ApiConstants.userRoleKey, userRole.value);
         }
       }
-
       isLoggedIn.value = true;
       return true;
     } catch (e) {
@@ -61,7 +56,7 @@ class UserService extends GetxService {
     }
   }
 
-  // Login user
+  // ========= login =========
   Future<ApiResponse> login(String email, String password) async {
     final response = await _apiService.login(
       email: email,
@@ -76,7 +71,7 @@ class UserService extends GetxService {
     return response;
   }
 
-  // Register user
+  // ========= register =========
   Future<ApiResponse> register({
     required String name,
     required String email,
@@ -91,44 +86,40 @@ class UserService extends GetxService {
     );
   }
 
-  // Logout user
+  // ========= logout =========
   Future<ApiResponse> logout() async {
     final response = await _apiService.logout();
     _resetAuthState();
     return response;
   }
 
-  // Reset authentication state
+  // ========= reset state login =========
   void _resetAuthState() {
     isLoggedIn.value = false;
     userRole.value = '';
     userData.value = {};
   }
 
-  // Refresh token - internal implementation
+  // ========= refresh token =========
   Future<bool> _refreshToken() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-
-      // Call refresh token endpoint directly
       final dio = Dio();
       dio.options.baseUrl = _apiService.baseUrl;
-
       final response = await dio.get(ApiConstants.refreshEndpoint);
-
       if (response.statusCode == 200 && response.data['accessToken'] != null) {
-        // Save new token
+        // simpan token baru
         await prefs.setString(
             ApiConstants.accessTokenKey, response.data['accessToken']);
         return true;
       } else {
-        // Clear tokens if refresh fails
+        // hapus token jika refresh gagal
         await prefs.remove(ApiConstants.accessTokenKey);
         await prefs.remove(ApiConstants.userRoleKey);
         return false;
       }
     } catch (e) {
-      // Clear tokens on error
+      // hapus token jika error
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(ApiConstants.accessTokenKey);
       await prefs.remove(ApiConstants.userRoleKey);
@@ -136,47 +127,31 @@ class UserService extends GetxService {
     }
   }
 
-  // Fetch current user data
+  // ========= ambil data user =========
   Future<void> _fetchUserData() async {
     try {
-      print('Fetching updated user data');
       final response = await _apiService.getUserProfile();
       if (response.success && response.data != null) {
-        print('Successfully received updated user data: ${response.data}');
         userData.value = response.data;
-
-        // Update specific fields that might have changed
-        if (userData.value.containsKey('name')) {
-          print('Updating name to: ${userData.value['name']}');
-        }
-
-        if (userData.value.containsKey('email')) {
-          print('Updating email to: ${userData.value['email']}');
-        }
-
-        if (userData.value.containsKey('profile_pic')) {
-          print('Updating profile pic to: ${userData.value['profile_pic']}');
-        }
-      } else {
-        print('Failed to fetch user data: ${response.message}');
       }
+      // Silently handle unsuccessful responses
     } catch (e) {
-      print('Error fetching user data: $e');
+      // Silently handle exceptions
     }
   }
 
-  // Get user info (name, email, etc.)
+  // ========= ambil data user =========
   Map<String, dynamic> get userInfo => userData;
 
-  // Get user ID
+  // ========= ambil id user =========
   int? get userId => userData['user_id'];
 
-  // Get current user profile data
+  // ========= ambil data profile user =========
   Future<ApiResponse> getUserProfile() async {
     return await _apiService.getUserProfile();
   }
 
-  // Update user profile
+  // ========= update data profile user =========
   Future<ApiResponse> updateUserProfile({
     String? name,
     String? email,
@@ -188,7 +163,7 @@ class UserService extends GetxService {
       birthdate: birthdate,
     );
 
-    // Refresh user data if update was successful
+    // refresh data user jika update berhasil
     if (response.success) {
       await _fetchUserData();
     }
@@ -196,7 +171,7 @@ class UserService extends GetxService {
     return response;
   }
 
-  // Change user password
+  // ========= ubah password =========
   Future<ApiResponse> changePassword({
     required String oldPassword,
     required String newPassword,
@@ -207,11 +182,11 @@ class UserService extends GetxService {
     );
   }
 
-  // Change profile picture
+  // ========= ubah gambar profile =========
   Future<ApiResponse> changeProfilePicture(String imagePath) async {
     final response = await _apiService.changeProfilePicture(imagePath);
 
-    // Refresh user data if update was successful
+    // refresh data user jika update berhasil
     if (response.success) {
       await _fetchUserData();
     }
@@ -219,7 +194,7 @@ class UserService extends GetxService {
     return response;
   }
 
-  // Get full profile image URL
+  // ========= ambil url gambar profile =========
   String getProfileImageUrl(String? profilePic) {
     if (profilePic == null || profilePic.isEmpty) {
       return '${ApiConstants.profileImageBaseUrl}${ApiConstants.defaultProfileImage}';

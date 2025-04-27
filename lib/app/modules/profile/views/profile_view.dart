@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:opticscan/utils/constants/color.dart';
 import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
 
 import '../controllers/profile_controller.dart';
-
-// Define the primary color constant
-const Color primaryColor = Color(0xFF146EF5);
-const Color warnaBackgroundPage = Color(0xFFF2F6FE);
 
 class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});
@@ -15,7 +12,7 @@ class ProfileView extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: warnaBackgroundPage,
+      backgroundColor: backgroundLight,
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: StylishProgressIndicator(size: 40));
@@ -66,9 +63,9 @@ class ProfileView extends GetView<ProfileController> {
         }
         return Stack(
           children: [
-            // Main Profile View
+            // tampilan utama profile
             _buildMainProfileView(context),
-            // Edit Profile Overlay (shown when isEditMode is true)
+            // overlay edit profile (ditampilkan saat isEditMode true)
             if (controller.isEditMode.value) _buildEditProfileOverlay(context),
           ],
         );
@@ -76,7 +73,7 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // The main profile view with edit button and logout
+  // tampilan utama profile dengan tombol edit dan logout
   Widget _buildMainProfileView(BuildContext context) {
     return SafeArea(
       child: SingleChildScrollView(
@@ -86,7 +83,7 @@ class ProfileView extends GetView<ProfileController> {
           children: [
             const SizedBox(height: 20),
 
-            // Profile Picture
+            // gambar profile
             Center(
               child: Container(
                 width: 100,
@@ -119,17 +116,17 @@ class ProfileView extends GetView<ProfileController> {
 
             const SizedBox(height: 8),
 
-            // Name below profile picture
+            // nama di bawah gambar profile
             Text(
               controller.name.value,
               style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
               ),
             ),
 
-            // User role
+            // role user
             Text(
               controller.role.value.capitalize ?? "User",
               style: TextStyle(
@@ -140,7 +137,7 @@ class ProfileView extends GetView<ProfileController> {
 
             const SizedBox(height: 20),
 
-            // Edit Profile Button
+            // tombol edit profile
             Center(
               child: SizedBox(
                 width: 240,
@@ -178,7 +175,7 @@ class ProfileView extends GetView<ProfileController> {
 
             const SizedBox(height: 12),
 
-            // Change Password Button
+            // tombol ubah password
             Center(
               child: SizedBox(
                 width: 240,
@@ -215,12 +212,12 @@ class ProfileView extends GetView<ProfileController> {
 
             const SizedBox(height: 30),
 
-            // Profile Information Display
+            // tampilan informasi profile
             _buildProfileInfo(),
 
             const SizedBox(height: 20),
 
-            // Logout Button
+            // tombol logout
             Center(
               child: SizedBox(
                 width: 185,
@@ -251,12 +248,12 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // Display-only profile information
+  // tampilan informasi profile
   Widget _buildProfileInfo() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Name Field (display only)
+        // nama (hanya tampilan)
         _buildInfoField(
           label: 'Name',
           value: controller.name.value,
@@ -264,7 +261,7 @@ class ProfileView extends GetView<ProfileController> {
         ),
         const SizedBox(height: 16),
 
-        // Birthdate Field (display only)
+        // tanggal lahir (hanya tampilan)
         _buildInfoField(
           label: 'Birthdate',
           value: controller.formattedBirthdate.value,
@@ -272,7 +269,7 @@ class ProfileView extends GetView<ProfileController> {
         ),
         const SizedBox(height: 16),
 
-        // Email Field (display only)
+        // email (hanya tampilan)
         _buildInfoField(
           label: 'Email',
           value: controller.email.value,
@@ -283,7 +280,7 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // Display-only field
+  // tampilan field hanya tampilan
   Widget _buildInfoField({
     required String label,
     required String value,
@@ -327,11 +324,11 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // Edit profile overlay
+  // overlay edit profile
   Widget _buildEditProfileOverlay(BuildContext context) {
     return Positioned.fill(
       child: Container(
-        color: warnaBackgroundPage,
+        color: backgroundLight,
         child: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
@@ -358,13 +355,13 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Profile Picture
+                  // gambar profile
                   Center(
                     child: Stack(
                       children: [
                         Obx(() {
                           if (controller.selectedImage.value != null) {
-                            // Show selected image
+                            // tampilkan gambar yang dipilih
                             return Container(
                               width: 120,
                               height: 120,
@@ -386,7 +383,7 @@ class ProfileView extends GetView<ProfileController> {
                               ),
                             );
                           } else {
-                            // Show current profile image
+                            // tampilkan gambar profile saat ini
                             return Container(
                               width: 120,
                               height: 120,
@@ -446,8 +443,8 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                   const SizedBox(height: 30),
 
-                  // Direct Form Fields
-                  // Name Field
+                  // field form langsung
+                  // nama
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -547,7 +544,7 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Birthdate Field
+                  // tanggal lahir
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -646,7 +643,7 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Email Field
+                  // email
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -750,7 +747,7 @@ class ProfileView extends GetView<ProfileController> {
 
                   const SizedBox(height: 30),
 
-                  // Save Button
+                  // tombol simpan
                   Center(
                     child: SizedBox(
                       width: 185,
@@ -787,7 +784,7 @@ class ProfileView extends GetView<ProfileController> {
 
                   const SizedBox(height: 10),
 
-                  // Cancel button
+                  // tombol cancel
                   Center(
                     child: SizedBox(
                       width: 185,

@@ -5,20 +5,20 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:opticscan/app/routes/app_pages.dart';
 import 'package:opticscan/services/user_service.dart';
-import 'package:opticscan/utils/constants/api_constants.dart';
+import 'package:opticscan/utils/constants/color.dart';
 import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
 
 class ProfileController extends GetxController {
   // User service
   final UserService _userService = Get.find<UserService>();
 
-  // Profile data
+  // data profile
   final profileData = {}.obs;
   final isLoading = true.obs;
   final hasError = false.obs;
   final errorMessage = ''.obs;
 
-  // User data observables
+  // data user
   final name = ''.obs;
   final email = ''.obs;
   final birthdate = ''.obs;
@@ -26,22 +26,22 @@ class ProfileController extends GetxController {
   final role = ''.obs;
   final formattedBirthdate = ''.obs;
 
-  // Overall edit mode flag
+  // mode edit
   final isEditMode = false.obs;
 
-  // Status message
+  // pesan status
   final statusMessage = ''.obs;
   final showSaved = false.obs;
 
-  // Selected index for bottom navigation
-  final selectedIndex = 2.obs; // 2 for profile tab
+  // index pilihan untuk navbar bawah
+  final selectedIndex = 2.obs; // 2 untuk tab profile
 
-  // Loading states
+  // loading state
   final isUpdatingProfile = false.obs;
   final isChangingPassword = false.obs;
   final isUploadingImage = false.obs;
 
-  // Error messages
+  // pesan error
   final nameError = ''.obs;
   final birthdateError = ''.obs;
   final emailError = ''.obs;
@@ -50,7 +50,7 @@ class ProfileController extends GetxController {
   final newPasswordError = ''.obs;
   final confirmPasswordError = ''.obs;
 
-  // Text editing controllers for form fields
+  // controller text untuk field form
   late TextEditingController nameController;
   late TextEditingController emailController;
   late TextEditingController passwordController;
@@ -58,24 +58,20 @@ class ProfileController extends GetxController {
   late TextEditingController newPasswordController;
   late TextEditingController confirmPasswordController;
 
-  // Selected image for upload
+  // gambar yang dipilih untuk upload
   Rx<File?> selectedImage = Rx<File?>(null);
 
   @override
   void onInit() {
     super.onInit();
-
-    // Initialize text controllers
     nameController = TextEditingController();
     emailController = TextEditingController();
     passwordController = TextEditingController(text: '••••••');
     oldPasswordController = TextEditingController();
     newPasswordController = TextEditingController();
     confirmPasswordController = TextEditingController();
-
     _setupListeners();
-
-    // Load user profile data
+    // Load data profile
     loadProfileData();
   }
 
@@ -113,7 +109,6 @@ class ProfileController extends GetxController {
 
   @override
   void onClose() {
-    // Dispose text controllers
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
@@ -123,7 +118,7 @@ class ProfileController extends GetxController {
     super.onClose();
   }
 
-  // Load user profile data from backend
+  // ========= load data profile dari backend =========
   Future<void> loadProfileData() async {
     isLoading.value = true;
     hasError.value = false;
@@ -134,20 +129,18 @@ class ProfileController extends GetxController {
       if (response.success && response.data != null) {
         profileData.value = response.data;
 
-        // Update observables
+        // update data user
         name.value = profileData['name'] ?? '';
         email.value = profileData['email'] ?? '';
         birthdate.value = profileData['birthdate'] ?? '';
         profilePic.value = profileData['profile_pic'] ?? '';
         role.value = profileData['role'] ?? '';
-
-        // Format birthdate for display
+        // format tanggal lahir untuk tampilan
         if (birthdate.value.isNotEmpty) {
           final date = DateTime.parse(birthdate.value);
           formattedBirthdate.value = DateFormat('dd MMMM yyyy').format(date);
         }
-
-        // Update text controllers
+        // update controller text
         nameController.text = name.value;
         emailController.text = email.value;
       } else {
@@ -162,31 +155,26 @@ class ProfileController extends GetxController {
     }
   }
 
-  // Get profile image URL
+  // ========= ambil url gambar profile =========
   String get profileImageUrl =>
       _userService.getProfileImageUrl(profilePic.value);
 
-  // Enter edit mode and init the controllers with current values
+  // ========= masuk mode edit dan inisialisasi controller dengan nilai saat ini =========
   void enterEditMode() {
-    // Clear all error messages
     clearErrors();
-
-    // Update text field controllers with current values
     nameController.text = name.value;
     emailController.text = email.value;
-
-    // Enter edit mode
     isEditMode.value = true;
   }
 
-  // Exit edit mode without saving
+  // ========= keluar mode edit tanpa menyimpan =========
   void cancelEdit() {
     isEditMode.value = false;
     clearErrors();
     selectedImage.value = null;
   }
 
-  // Clear all error messages
+  // ========= hapus semua pesan error =========
   void clearErrors() {
     nameError.value = '';
     birthdateError.value = '';
@@ -197,16 +185,16 @@ class ProfileController extends GetxController {
     confirmPasswordError.value = '';
   }
 
-  // Validate profile form fields
+  // ========= validasi form profile =========
   bool validateProfileForm() {
     bool isValid = true;
 
-    // Clear previous errors
+    // hapus pesan error sebelumnya
     nameError.value = '';
     emailError.value = '';
     birthdateError.value = '';
 
-    // Validate name (required)
+    // validasi nama (required)
     if (nameController.text.trim().isEmpty) {
       nameError.value = 'Name is required';
       isValid = false;
@@ -215,13 +203,13 @@ class ProfileController extends GetxController {
       isValid = false;
     }
 
-    // Validate birthdate
+    // validasi tanggal lahir (required)
     if (birthdate.value.isEmpty) {
       birthdateError.value = 'Birthdate is required';
       isValid = false;
     }
 
-    // Validate email (required and must be valid format)
+    // validasi email (required dan harus format valid)
     if (emailController.text.trim().isEmpty) {
       emailError.value = 'Email is required';
       isValid = false;
@@ -233,22 +221,22 @@ class ProfileController extends GetxController {
     return isValid;
   }
 
-  // Validate password change form
+  // ========= validasi form ubah password =========
   bool validatePasswordForm() {
     bool isValid = true;
 
-    // Clear previous errors
+    // hapus pesan error sebelumnya
     oldPasswordError.value = '';
     newPasswordError.value = '';
     confirmPasswordError.value = '';
 
-    // Validate old password
+    // validasi password lama (required)
     if (oldPasswordController.text.isEmpty) {
       oldPasswordError.value = 'Current password is required';
       isValid = false;
     }
 
-    // Validate new password
+    // validasi password baru (required dan harus minimal 6 karakter)
     if (newPasswordController.text.isEmpty) {
       newPasswordError.value = 'New password is required';
       isValid = false;
@@ -257,7 +245,7 @@ class ProfileController extends GetxController {
       isValid = false;
     }
 
-    // Validate confirm password
+    // validasi password konfirmasi (required dan harus sama dengan password baru)
     if (confirmPasswordController.text.isEmpty) {
       confirmPasswordError.value = 'Confirm password is required';
       isValid = false;
@@ -265,127 +253,84 @@ class ProfileController extends GetxController {
       confirmPasswordError.value = 'Passwords do not match';
       isValid = false;
     }
-
-    if (!isValid) {
-      print('Form validation failed:');
-      if (oldPasswordError.value.isNotEmpty)
-        print('- Old password error: ${oldPasswordError.value}');
-      if (newPasswordError.value.isNotEmpty)
-        print('- New password error: ${newPasswordError.value}');
-      if (confirmPasswordError.value.isNotEmpty)
-        print('- Confirm password error: ${confirmPasswordError.value}');
-    } else {
-      print('Form validation successful');
-    }
-
     return isValid;
   }
 
-  // Change password
+  // ========= ubah password =========
   Future<void> changePassword() async {
     if (!validatePasswordForm()) return;
-
     isChangingPassword.value = true;
-
     try {
       final response = await _userService.changePassword(
         oldPassword: oldPasswordController.text,
         newPassword: newPasswordController.text,
       );
-
       if (response.success) {
-        Get.back(); // Close the password dialog
+        Get.back();
         _showSuccessSnackbar('Password changed successfully');
-
-        // Clear password fields
         oldPasswordController.clear();
         newPasswordController.clear();
         confirmPasswordController.clear();
       } else {
-        // Check for common error messages from backend
-
         oldPasswordError.value = 'Incorrect current password';
       }
     } catch (e) {
-      print('Error changing password: $e');
       _showErrorSnackbar('An error occurred while changing password');
     } finally {
       isChangingPassword.value = false;
     }
   }
 
-  // Update profile
+  // ========= simpan profile =========
   Future<void> saveProfile() async {
-    // First validate the form
     if (!validateProfileForm()) {
-      return; // Don't save if validation fails
+      return;
     }
-
     isUpdatingProfile.value = true;
-    print('Starting profile update process');
-
     try {
-      print(
-          'Sending profile update request with: name=${nameController.text.trim()}, email=${emailController.text.trim()}, birthdate=${birthdate.value}');
-
       final response = await _userService.updateUserProfile(
         name: nameController.text.trim(),
         email: emailController.text.trim(),
         birthdate: birthdate.value,
       );
-
-      print(
-          'Profile update response: ${response.success}, message: ${response.message}');
-
       if (response.success) {
-        // Update observable values immediately
+        // update data user
         name.value = nameController.text.trim();
         email.value = emailController.text.trim();
-
-        // Format birthdate for display
+        // format tanggal lahir untuk tampilan
         if (birthdate.value.isNotEmpty) {
           final date = DateTime.parse(birthdate.value);
           formattedBirthdate.value = DateFormat('dd MMMM yyyy').format(date);
         }
-
-        // Upload image if selected (do this in parallel)
+        // upload gambar jika dipilih (lakukan secara paralel)
         if (selectedImage.value != null) {
           await uploadProfileImage();
         }
-
-        // Show saved status
+        // tampilkan pesan sukses
         showSaved.value = true;
-        print('Profile updated successfully, showing success status');
-
-        // Hide saved status after delay and show dialog
+        // hide pesan sukses setelah delay dan tampilkan dialog
         Future.delayed(const Duration(seconds: 1), () {
-          // Ensure we're still in the right state before modifying values
           if (isUpdatingProfile.value) {
             showSaved.value = false;
             isUpdatingProfile.value = false;
-            // Exit edit mode after showing saved status
+            // keluar mode edit setelah tampilkan pesan sukses
             isEditMode.value = false;
-
-            // Show success dialog
             _showSuccessDialog('Profile updated successfully');
-            print('Edit mode exited, success dialog shown');
           }
         });
       } else {
-        // Clear loading state on error
+        // hapus loading state jika gagal
         isUpdatingProfile.value = false;
         _showErrorSnackbar(response.message);
-        print('Profile update failed: ${response.message}');
       }
     } catch (e) {
-      // Clear loading state on exception
+      // hapus loading state jika terjadi exception
       isUpdatingProfile.value = false;
       _showErrorSnackbar('An error occurred while updating profile');
-      print('Exception during profile update: $e');
     }
   }
 
-  // Pick image from gallery
+  // ========= pilih gambar dari galeri =========
   Future<void> pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -395,19 +340,16 @@ class ProfileController extends GetxController {
     }
   }
 
-  // Upload profile image
+  // ========= upload gambar profile =========
   Future<void> uploadProfileImage() async {
     if (selectedImage.value == null) return;
-
     isUploadingImage.value = true;
-
     try {
       final response = await _userService.changeProfilePicture(
         selectedImage.value!.path,
       );
-
       if (response.success) {
-        // Update profile picture
+        // update gambar profile
         profilePic.value = response.data ?? '';
         selectedImage.value = null;
       } else {
@@ -420,14 +362,14 @@ class ProfileController extends GetxController {
     }
   }
 
-  // Pick birthdate using a date picker
+  // ========= pilih tanggal lahir =========
   Future<void> selectBirthdate(BuildContext context) async {
     DateTime initialDate;
     if (birthdate.value.isNotEmpty) {
       initialDate = DateTime.parse(birthdate.value);
     } else {
-      initialDate = DateTime.now()
-          .subtract(const Duration(days: 365 * 18)); // Default to 18 years ago
+      initialDate = DateTime.now().subtract(
+          const Duration(days: 365 * 18)); // default 18 tahun yang lalu
     }
 
     final DateTime? picked = await showDatePicker(
@@ -440,9 +382,9 @@ class ProfileController extends GetxController {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Colors.blue, // Header background color
-              onPrimary: Colors.white, // Header text color
-              onSurface: Colors.black, // Calendar text color
+              primary: Colors.blue,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
             ),
             dialogBackgroundColor: Colors.white,
           ),
@@ -450,38 +392,29 @@ class ProfileController extends GetxController {
         );
       },
     );
-
     if (picked != null) {
-      // Format in yyyy-MM-dd for backend
+      // format untuk backend
       birthdate.value = DateFormat('yyyy-MM-dd').format(picked);
 
-      // Format for display
+      // format untuk tampilan
       formattedBirthdate.value = DateFormat('dd MMMM yyyy').format(picked);
 
-      // Clear any error
+      // hapus pesan error
       birthdateError.value = '';
     }
   }
 
-  // Show change password dialog
+  // ========= tampilkan dialog ubah password =========
   void showChangePasswordDialog() {
-    print('Opening change password dialog');
-
-    // Clear previous password fields
     oldPasswordController.clear();
     newPasswordController.clear();
     confirmPasswordController.clear();
 
-    // Clear errors
     oldPasswordError.value = '';
     newPasswordError.value = '';
     confirmPasswordError.value = '';
 
-    // Create form key for validation
     final formKey = GlobalKey<FormState>();
-
-    // Primary color for styling
-    const Color primaryColor = Color(0xFF146EF5);
 
     Get.dialog(
       AlertDialog(
@@ -528,7 +461,7 @@ class ProfileController extends GetxController {
             child: Obx(() => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Current password field
+                    // field password lama
                     TextFormField(
                       controller: oldPasswordController,
                       obscureText: true,
@@ -570,7 +503,7 @@ class ProfileController extends GetxController {
                     ),
                     const SizedBox(height: 16),
 
-                    // New password field
+                    // field password baru
                     TextFormField(
                       controller: newPasswordController,
                       obscureText: true,
@@ -615,7 +548,7 @@ class ProfileController extends GetxController {
                     ),
                     const SizedBox(height: 16),
 
-                    // Confirm password field
+                    // field password konfirmasi
                     TextFormField(
                       controller: confirmPasswordController,
                       obscureText: true,
@@ -665,7 +598,7 @@ class ProfileController extends GetxController {
         actions: [
           Row(
             children: [
-              // Cancel button
+              // tombol cancel
               Expanded(
                 child: TextButton(
                   onPressed: () => Get.back(),
@@ -686,15 +619,13 @@ class ProfileController extends GetxController {
                 ),
               ),
               const SizedBox(width: 12),
-              // Change button
+              // tombol ubah
               Expanded(
                 child: Obx(() => ElevatedButton(
                       onPressed: isChangingPassword.value
                           ? null
                           : () {
                               if (formKey.currentState!.validate()) {
-                                print(
-                                    'Form validated, calling changePassword()');
                                 changePassword();
                               }
                             },
@@ -732,13 +663,9 @@ class ProfileController extends GetxController {
     );
   }
 
-  // Show success dialog when profile is updated
+  // ========= tampilkan dialog sukses =========
   void _showSuccessDialog(String message) {
-    print('Showing success dialog with message: $message');
-
-    // Ensure loading state is cleared
     isUpdatingProfile.value = false;
-
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -753,7 +680,7 @@ class ProfileController extends GetxController {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Success icon
+              // icon sukses
               Container(
                 width: 80,
                 height: 80,
@@ -779,7 +706,7 @@ class ProfileController extends GetxController {
               ),
               const SizedBox(height: 24),
 
-              // Success title
+              // judul sukses
               const Text(
                 'EDIT PROFILE COMPLETE',
                 style: TextStyle(
@@ -790,7 +717,7 @@ class ProfileController extends GetxController {
               ),
               const SizedBox(height: 12),
 
-              // Success message
+              // pesan sukses
               Text(
                 'You can now see your account in profile page',
                 textAlign: TextAlign.center,
@@ -802,7 +729,7 @@ class ProfileController extends GetxController {
               ),
               const SizedBox(height: 24),
 
-              // See My Profile button
+              // tombol lihat profile
               Center(
                 child: SizedBox(
                   width: 219,
@@ -810,17 +737,16 @@ class ProfileController extends GetxController {
                   child: ElevatedButton(
                     onPressed: () {
                       Get.back();
-                      // Make sure to reload data after dialog is closed
+                      // memuat ulang data setelah dialog ditutup
                       loadProfileData();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF146EF5),
+                      backgroundColor: primaryColor,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
-                        side: const BorderSide(
-                            color: Color(0xFF146EF5), width: 2),
+                        side: const BorderSide(color: primaryColor, width: 2),
                       ),
                     ),
                     child: const Text(
@@ -842,7 +768,7 @@ class ProfileController extends GetxController {
     );
   }
 
-  // Show success snackbar
+  // ========= tampilkan snackbar sukses =========
   void _showSuccessSnackbar(String message) {
     Get.snackbar(
       'Success',
@@ -853,7 +779,7 @@ class ProfileController extends GetxController {
     );
   }
 
-  // Show error snackbar
+  // ========= tampilkan snackbar error =========
   void _showErrorSnackbar(String message) {
     Get.snackbar(
       'Error',
@@ -864,11 +790,11 @@ class ProfileController extends GetxController {
     );
   }
 
-  // Navigation method for bottom navbar
+  // ========= navigasi untuk navbar bawah =========
   void onItemTapped(int index) {
     selectedIndex.value = index;
 
-    // Navigate based on the selected index
+    // navigasi berdasarkan index yang dipilih
     switch (index) {
       case 0: // Home
         Get.offAllNamed(Routes.HOME);
@@ -877,14 +803,12 @@ class ProfileController extends GetxController {
         Get.offAllNamed(Routes.RIWAYAT);
         break;
       case 2: // Profile
-        // Already on profile, no need to navigate
         break;
     }
   }
 
-  // Method to handle logout
+  // ========= proses logout =========
   void logout() async {
-    // Show confirmation dialog first
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -899,7 +823,7 @@ class ProfileController extends GetxController {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Logout icon
+              // icon logout
               Container(
                 width: 80,
                 height: 80,
@@ -917,7 +841,7 @@ class ProfileController extends GetxController {
               ),
               const SizedBox(height: 24),
 
-              // Confirmation title
+              // judul logout
               const Text(
                 'LOGOUT',
                 style: TextStyle(
@@ -928,7 +852,7 @@ class ProfileController extends GetxController {
               ),
               const SizedBox(height: 12),
 
-              // Confirmation message
+              // pesan logout
               const Text(
                 'Are you sure you want to logout from your account?',
                 textAlign: TextAlign.center,
@@ -939,10 +863,10 @@ class ProfileController extends GetxController {
               ),
               const SizedBox(height: 24),
 
-              // Buttons
+              // tombol
               Row(
                 children: [
-                  // Cancel button
+                  // tombol cancel
                   Expanded(
                     child: TextButton(
                       onPressed: () => Get.back(),
@@ -964,12 +888,12 @@ class ProfileController extends GetxController {
                   ),
                   const SizedBox(width: 16),
 
-                  // Logout button
+                  // tombol logout
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        Get.back(); // Close dialog
-                        _performLogout(); // Perform the actual logout
+                        Get.back(); // tutup dialog
+                        _performLogout(); // lakukan logout
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
@@ -998,9 +922,9 @@ class ProfileController extends GetxController {
     );
   }
 
-  // Private method for the actual logout process
+  // ========= proses logout =========
   void _performLogout() async {
-    // Show loading dialog
+    // tampilkan loading dialog
     Get.dialog(
       const Center(
         child: StylishProgressIndicator(size: 50),
@@ -1009,14 +933,11 @@ class ProfileController extends GetxController {
     );
 
     try {
-      // Call logout API
+      // panggil API logout
       final response = await _userService.logout();
-
-      // Close loading dialog
       Get.back();
 
       if (response.success) {
-        // Show success message
         Get.snackbar(
           'Success',
           response.message,
@@ -1025,7 +946,6 @@ class ProfileController extends GetxController {
           colorText: Colors.white,
         );
       } else {
-        // Show error message but continue with logout navigation
         Get.snackbar(
           'Note',
           response.message,
@@ -1035,13 +955,10 @@ class ProfileController extends GetxController {
         );
       }
 
-      // Navigate to login screen
+      // navigasi ke login
       Get.offAllNamed(Routes.LOGIN);
     } catch (e) {
-      // Close loading dialog
       Get.back();
-
-      // Show error message
       Get.snackbar(
         'Error',
         'An error occurred during logout',
@@ -1049,8 +966,6 @@ class ProfileController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-
-      // Still navigate to login screen
       Get.offAllNamed(Routes.LOGIN);
     }
   }

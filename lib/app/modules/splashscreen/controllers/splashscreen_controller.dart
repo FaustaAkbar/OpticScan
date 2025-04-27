@@ -9,22 +9,15 @@ class SplashscreenController extends GetxController
   late AnimationController logoController;
   late AnimationController textController;
   late Animation<double> logoScaleAnimation;
-
   final String splashText = "Apply your future seamlessly.";
   late LetterAnimationController letterAnimationController;
-
   var showIcon = false.obs;
-  // Using late to get the service during onInit, not during controller creation
   late UserService _userService;
 
   @override
   void onInit() {
     super.onInit();
-
-    // Setup animations
     _setupAnimations();
-
-    // Start the animation sequence
     _startAnimationSequence();
   }
 
@@ -33,7 +26,6 @@ class SplashscreenController extends GetxController
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-
     logoScaleAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -41,12 +33,10 @@ class SplashscreenController extends GetxController
       parent: logoController,
       curve: Curves.elasticOut,
     ));
-
     textController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-
     letterAnimationController = LetterAnimationController(
       vsync: this,
       text: splashText,
@@ -57,22 +47,18 @@ class SplashscreenController extends GetxController
     await Future.delayed(const Duration(milliseconds: 300));
     showIcon.value = true;
     logoController.forward();
-
     await Future.delayed(const Duration(milliseconds: 800));
     await letterAnimationController.animateLetters();
-
-    // Check if user is already logged in
+    // cek apakah user sudah login
     try {
-      // Try to get UserService (which should be initialized by now)
+      // ambil service User
       _userService = Get.find<UserService>();
       await _userService.checkAuthStatus();
-
       await Future.delayed(const Duration(milliseconds: 1000));
       textController.forward().then((_) {
-        // Navigate to HOME if logged in, otherwise to LOGIN
+        // navigasi ke HOME jika sudah login, jika tidak maka ke LOGIN
         String route =
             _userService.isLoggedIn.value ? Routes.HOME : Routes.LOGIN;
-
         Get.offNamed(
           route,
           arguments: {
@@ -82,7 +68,7 @@ class SplashscreenController extends GetxController
         );
       });
     } catch (e) {
-      // If UserService is not available yet, just go to login
+      // jika service User tidak tersedia, langsung ke LOGIN
       await Future.delayed(const Duration(milliseconds: 1000));
       textController.forward().then((_) {
         Get.offNamed(

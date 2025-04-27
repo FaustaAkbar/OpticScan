@@ -1,28 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:opticscan/app/modules/login/controllers/login_controller.dart';
 import 'package:opticscan/app/routes/app_pages.dart';
 import 'package:opticscan/services/user_service.dart';
 import 'package:opticscan/utils/animations/animation.dart';
 
 class SignupController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  // Text controllers
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-
-  // Animation controller for signup animations
   late AnimationController animationController;
-
-  // Services
   final UserService _userService = Get.find<UserService>();
-
-  // Observable states
   final isLoading = false.obs;
   final isPasswordVisible = false.obs;
   final Rx<DateTime?> birthDate = Rx<DateTime?>(null);
 
-  // Validation errors
+  // Validasi input
   final nameError = ''.obs;
   final emailError = ''.obs;
   final passwordError = ''.obs;
@@ -32,14 +26,10 @@ class SignupController extends GetxController
   void onInit() {
     super.onInit();
     _setupTextFieldListeners();
-
-    // Initialize animation controller
     animationController = AnimationController(
       vsync: this,
       duration: AnimationDurations.formEntrance,
     );
-
-    // Start the animation
     animationController.forward();
   }
 
@@ -52,20 +42,18 @@ class SignupController extends GetxController
     super.onClose();
   }
 
-  // Setup listeners to clear errors when user types
+  // Setup listeners untuk membersihkan error saat user mengetik
   void _setupTextFieldListeners() {
     nameController.addListener(() {
       if (nameController.text.trim().isNotEmpty) {
         nameError.value = '';
       }
     });
-
     emailController.addListener(() {
       if (emailController.text.trim().isNotEmpty) {
         emailError.value = '';
       }
     });
-
     passwordController.addListener(() {
       if (passwordController.text.isNotEmpty) {
         passwordError.value = '';
@@ -73,10 +61,43 @@ class SignupController extends GetxController
     });
   }
 
+  // Method untuk membersihkan form fields
+  void clearFormFields() {
+    nameController.clear();
+    emailController.clear();
+    passwordController.clear();
+    birthDate.value = null;
+    nameError.value = '';
+    emailError.value = '';
+    passwordError.value = '';
+    birthDateError.value = '';
+  }
+
+  // Reset animation controller
+  void resetAnimation() {
+    animationController.reset();
+    animationController.forward();
+  }
+
+  // Navigate to login page
+  void goToLogin() {
+    clearFormFields();
+
+    // Reset login animation if LoginController exists
+    if (Get.isRegistered<LoginController>()) {
+      final loginController = Get.find<LoginController>();
+      loginController.resetAnimation();
+    }
+
+    Get.offNamed(Routes.LOGIN);
+  }
+
+  // ========= toggle password =========
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
 
+  // ========= pilih tanggal lahir =========
   Future<void> selectBirthDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -104,36 +125,37 @@ class SignupController extends GetxController
     }
   }
 
+  // ========= format tanggal lahir =========
   String? formatBirthDate() {
     if (birthDate.value == null) return null;
-
     return '${birthDate.value!.day.toString().padLeft(2, '0')}/'
         '${birthDate.value!.month.toString().padLeft(2, '0')}/'
         '${birthDate.value!.year}';
   }
 
+  // ========= validasi input =========
   bool _validateInputs() {
     bool isValid = true;
 
-    // Reset all errors
+    // membersihkan error
     nameError.value = '';
     birthDateError.value = '';
     emailError.value = '';
     passwordError.value = '';
 
-    // Validate name
+    // Validasi nama
     if (nameController.text.trim().isEmpty) {
-      nameError.value = 'Name is required';
+      nameError.value = 'Nama wajib diisi';
       isValid = false;
     }
 
-    // Validate birth date
+    // Validasi tanggal lahir
     if (birthDate.value == null) {
       birthDateError.value = 'Birth date is required';
       isValid = false;
     }
 
-    // Validate email
+    // Validasi email
     if (emailController.text.trim().isEmpty) {
       emailError.value = 'Email is required';
       isValid = false;
@@ -142,7 +164,7 @@ class SignupController extends GetxController
       isValid = false;
     }
 
-    // Validate password
+    // Validasi password
     if (passwordController.text.isEmpty) {
       passwordError.value = 'Password is required';
       isValid = false;
@@ -150,15 +172,13 @@ class SignupController extends GetxController
       passwordError.value = 'Password must be at least 6 characters';
       isValid = false;
     }
-
     return isValid;
   }
 
+  // ========= signup =========
   Future<void> signup() async {
     if (!_validateInputs()) return;
-
     isLoading.value = true;
-
     try {
       final response = await _userService.register(
         name: nameController.text.trim(),
@@ -166,9 +186,13 @@ class SignupController extends GetxController
         password: passwordController.text,
         birthdate: birthDate.value!,
       );
-
       if (response.success) {
         _showSuccessMessage(response.message);
+        clearFormFields();
+        if (Get.isRegistered<LoginController>()) {
+          final loginController = Get.find<LoginController>();
+          loginController.resetAnimation();
+        }
         Get.offNamed(Routes.LOGIN);
       } else {
         _showErrorMessage(response.message);
@@ -180,6 +204,7 @@ class SignupController extends GetxController
     }
   }
 
+  // menampilkan pesan sukses
   void _showSuccessMessage(String message) {
     Get.snackbar(
       'Success',
@@ -190,6 +215,7 @@ class SignupController extends GetxController
     );
   }
 
+  // menampilkan pesan error
   void _showErrorMessage(String message) {
     Get.snackbar(
       'Error',

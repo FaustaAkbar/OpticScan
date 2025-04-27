@@ -17,9 +17,7 @@ class ApiResponse {
 class ApiService {
   final Dio _dio = Dio();
   final String _baseUrl = ApiConstants.baseUrlEmulator;
-  // Getter for base URL
   String get baseUrl => _baseUrl;
-
   ApiService() {
     _dio.options.baseUrl = _baseUrl;
     _dio.options.connectTimeout = const Duration(seconds: 10);
@@ -28,12 +26,10 @@ class ApiService {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
-
-    // Add request interceptor to include auth token
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // Get token from secure storage
+          // ambil token dari storage
           final prefs = await SharedPreferences.getInstance();
           final token = prefs.getString(ApiConstants.accessTokenKey);
           if (token != null) {
@@ -42,17 +38,12 @@ class ApiService {
           return handler.next(options);
         },
         onError: (DioException error, handler) async {
-          // Skip token refresh for login endpoint
           if (error.requestOptions.path == ApiConstants.loginEndpoint) {
             return handler.next(error);
           }
-
-          // Handle 401 error (unauthorized) for other endpoints
           if (error.response?.statusCode == 401) {
-            // Try to refresh token
             bool refreshed = await _refreshToken();
             if (refreshed) {
-              // Retry the original request
               return handler.resolve(await _retry(error.requestOptions));
             }
           }
@@ -62,13 +53,12 @@ class ApiService {
     );
   }
 
-  // Method to retry a failed request
+  // ========= retry request =========
   Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
     final options = Options(
       method: requestOptions.method,
       headers: requestOptions.headers,
     );
-
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString(ApiConstants.accessTokenKey);
 
@@ -84,35 +74,29 @@ class ApiService {
     );
   }
 
-  // Login method
+  // ========= login =========
   Future<ApiResponse> login({
     required String email,
     required String password,
   }) async {
     try {
-      // Configure Dio to handle cookies properly
       final dio = Dio();
       dio.options.baseUrl = _baseUrl;
       dio.options.headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       };
-
-      // Configure options to receive cookies from response
       final options = Options(
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        // Enable cookie handling
         extra: {
           'withCredentials': true,
         },
-        // Make sure to receive response headers to extract cookies
         responseType: ResponseType.json,
         validateStatus: (status) => status! < 500,
       );
-
       final response = await dio.post(
         ApiConstants.loginEndpoint,
         data: {
@@ -121,32 +105,24 @@ class ApiService {
         },
         options: options,
       );
-
       if (response.statusCode == 200) {
-        // Save token to secure storage
+        // simpan token ke storage
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(
             ApiConstants.accessTokenKey, response.data['accessToken']);
         await prefs.setString(ApiConstants.userRoleKey, response.data['role']);
-
-        // Extract refresh token from cookies if present
         if (response.headers['set-cookie'] != null) {
           final cookies = response.headers['set-cookie'];
-
-          // Find and extract jwt cookie
           final jwtCookie = cookies?.firstWhere(
             (cookie) => cookie.startsWith('jwt='),
             orElse: () => '',
           );
-
           if (jwtCookie != null && jwtCookie.isNotEmpty) {
-            // Extract token value from cookie string
             final refreshToken = jwtCookie.split(';')[0].substring(4);
-            // Store refresh token
+            //simpan refresh token ke storage
             await prefs.setString('refresh_token', refreshToken);
           }
         }
-
         return ApiResponse(
           success: true,
           message: response.data['message'] ?? 'Login successful',
@@ -177,7 +153,7 @@ class ApiService {
     }
   }
 
-  // Register method
+  // ========= register =========
   Future<ApiResponse> register({
     required String name,
     required String email,
@@ -185,18 +161,16 @@ class ApiService {
     required DateTime birthdate,
   }) async {
     try {
-      // Format date to YYYY-MM-DD
+      // format tanggal ke YYYY-MM-DD
       final formattedDate =
           '${birthdate.year}-${birthdate.month.toString().padLeft(2, '0')}-${birthdate.day.toString().padLeft(2, '0')}';
-
       final response = await _dio.post(ApiConstants.registerEndpoint, data: {
         'name': name,
         'email': email,
         'password': password,
         'birthdate': formattedDate,
-        'role': 'pasien', // Default role for Flutter app users
+        'role': 'pasien', // default role untuk user mobile adalah pasien
       });
-
       if (response.statusCode == 201) {
         return ApiResponse(
           success: true,
@@ -221,21 +195,19 @@ class ApiService {
     }
   }
 
-  // Refresh token method
+  // ========= refresh token =========
   Future<bool> _refreshToken() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-
-      // Call refresh token endpoint
+      // panggil endpoint refresh token
       final response = await _dio.get(ApiConstants.refreshEndpoint);
-
       if (response.statusCode == 200 && response.data['accessToken'] != null) {
-        // Save new token
+        // simpan token baru
         await prefs.setString(
             ApiConstants.accessTokenKey, response.data['accessToken']);
         return true;
       } else {
-        // Clear tokens if refresh fails
+        // hapus token jika refresh gagal
         await prefs.remove(ApiConstants.accessTokenKey);
         await prefs.remove(ApiConstants.userRoleKey);
         return false;
@@ -245,58 +217,47 @@ class ApiService {
     }
   }
 
-  // Logout method
+  // ========= logout =========
   Future<ApiResponse> logout() async {
     try {
-      // Configure Dio to send cookies with request
       final dio = Dio();
       dio.options.baseUrl = _baseUrl;
-
-      // Get the stored refresh token if any
+      // ambil refresh token dari storage
       final prefs = await SharedPreferences.getInstance();
       final refreshToken = prefs.getString('refresh_token');
-
-      // Configure options to handle cookies properly
       final options = Options(
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        // Include cookie handling to ensure jwt cookie is sent
         extra: {
           'withCredentials': true,
         },
       );
-
-      // Add refresh token in cookie format for the backend
+      // tambah refresh token ke cookie
       if (refreshToken != null) {
         options.headers?['Cookie'] = 'jwt=$refreshToken';
       }
-
-      // Make logout request with configured options
       final response = await dio.get(
         ApiConstants.logoutEndpoint,
         options: options,
       );
-
-      // Clear all tokens from storage
+      // hapus semua token dari storage
       await prefs.remove(ApiConstants.accessTokenKey);
       await prefs.remove(ApiConstants.userRoleKey);
       await prefs.remove(ApiConstants.userIdKey);
       await prefs.remove('refresh_token');
-
       return ApiResponse(
         success: true,
         message: response.data['message'] ?? 'Logged out successfully',
       );
     } catch (e) {
-      // Still clear tokens on error
+      // hapus token kalau error
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(ApiConstants.accessTokenKey);
       await prefs.remove(ApiConstants.userRoleKey);
       await prefs.remove(ApiConstants.userIdKey);
       await prefs.remove('refresh_token');
-
       return ApiResponse(
         success: false,
         message: 'Error during logout, but tokens cleared',
@@ -304,11 +265,10 @@ class ApiService {
     }
   }
 
-  // Get authenticated user info
+  // ========= ambil data user yang login =========
   Future<ApiResponse> getCurrentUser() async {
     try {
       final response = await _dio.get(ApiConstants.userInfoEndpoint);
-
       if (response.statusCode == 200) {
         return ApiResponse(
           success: true,
@@ -334,11 +294,10 @@ class ApiService {
     }
   }
 
-  // Get examination results
+  // ========= ambil data hasil pemeriksaan =========
   Future<ApiResponse> getExaminationResults() async {
     try {
       final response = await _dio.get(ApiConstants.getExamResultsEndpoint);
-
       if (response.statusCode == 200) {
         return ApiResponse(
           success: true,
@@ -366,26 +325,22 @@ class ApiService {
     }
   }
 
-  // Submit examination (upload eye scan)
+  // ========= submit pemeriksaan (upload gambar mata) =========
   Future<ApiResponse> submitExamination({
     required String imagePath,
     String? complaints,
   }) async {
     try {
-      // Create form data
       final formData = FormData.fromMap({
         'eye_pic':
             await MultipartFile.fromFile(imagePath, filename: 'eye_scan.jpg'),
         if (complaints != null && complaints.isNotEmpty)
           'complaints': complaints,
       });
-
-      // Send request
       final response = await _dio.post(
         ApiConstants.submitExamEndpoint,
         data: formData,
       );
-
       if (response.statusCode == 201) {
         return ApiResponse(
           success: true,
@@ -412,7 +367,7 @@ class ApiService {
     }
   }
 
-  // Get user profile data
+  // ========= ambil data profile user =========
   Future<ApiResponse> getUserProfile() async {
     try {
       final response = await _dio.get(ApiConstants.getUserProfileEndpoint);
@@ -442,7 +397,7 @@ class ApiService {
     }
   }
 
-  // Update user profile data
+  // ========= update data profile user =========
   Future<ApiResponse> updateUserProfile({
     String? name,
     String? email,
@@ -454,9 +409,6 @@ class ApiService {
         if (email != null) 'email': email,
         if (birthdate != null) 'birthdate': birthdate,
       };
-
-      print('Sending profile update with data: $data');
-
       final response = await _dio.patch(
         ApiConstants.updateUserProfileEndpoint,
         data: data,
@@ -465,10 +417,6 @@ class ApiService {
           receiveTimeout: const Duration(seconds: 20),
         ),
       );
-
-      print(
-          'Profile update response: ${response.statusCode} - ${response.data}');
-
       if (response.statusCode == 200) {
         return ApiResponse(
           success: true,
@@ -481,10 +429,7 @@ class ApiService {
         );
       }
     } on DioException catch (e) {
-      print('DioException in updateUserProfile: ${e.message}');
-      print('DioException type: ${e.type}');
       if (e.response != null) {
-        print('Error response data: ${e.response?.data}');
         return ApiResponse(
           success: false,
           message: e.response?.data?['message'] ?? 'Gagal memperbarui profil',
@@ -495,7 +440,6 @@ class ApiService {
         message: 'Tidak dapat terhubung ke server',
       );
     } catch (e) {
-      print('Unexpected error in updateUserProfile: $e');
       return ApiResponse(
         success: false,
         message: 'Terjadi kesalahan yang tidak terduga',
@@ -503,14 +447,12 @@ class ApiService {
     }
   }
 
-  // Change password
+  // ubah password
   Future<ApiResponse> changePassword({
     required String oldPassword,
     required String newPassword,
   }) async {
     try {
-      print('Sending change password request...');
-
       final response = await _dio.patch(
         ApiConstants.changePasswordEndpoint,
         data: {
@@ -521,10 +463,6 @@ class ApiService {
           validateStatus: (status) => status! < 500,
         ),
       );
-
-      print(
-          'Password change response: ${response.statusCode} - ${response.data}');
-
       if (response.statusCode == 200) {
         return ApiResponse(
           success: true,
@@ -537,9 +475,7 @@ class ApiService {
         );
       }
     } on DioException catch (e) {
-      print('DioException in changePassword: ${e.message}');
       if (e.response != null) {
-        print('Error response data: ${e.response?.data}');
         return ApiResponse(
           success: false,
           message: e.response?.data?['message'] ?? 'Gagal mengubah password',
@@ -550,7 +486,6 @@ class ApiService {
         message: 'Tidak dapat terhubung ke server',
       );
     } catch (e) {
-      print('Unexpected error in changePassword: $e');
       return ApiResponse(
         success: false,
         message: 'Terjadi kesalahan yang tidak terduga',
@@ -558,7 +493,7 @@ class ApiService {
     }
   }
 
-  // Change profile picture
+  // ========= ubah gambar profile =========
   Future<ApiResponse> changeProfilePicture(String imagePath) async {
     try {
       final formData = FormData.fromMap({
@@ -567,12 +502,10 @@ class ApiService {
           filename: 'profile_pic.jpg',
         ),
       });
-
       final response = await _dio.patch(
         ApiConstants.changeProfilePicEndpoint,
         data: formData,
       );
-
       if (response.statusCode == 200) {
         return ApiResponse(
           success: true,

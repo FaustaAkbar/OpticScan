@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:opticscan/app/routes/app_pages.dart';
 import 'package:opticscan/utils/animations/animation.dart';
+import 'package:opticscan/utils/constants/color.dart';
 import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
 
 import '../controllers/login_controller.dart';
@@ -12,10 +12,7 @@ class LoginView extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
-    // Get the animation controller from the controller directly
     final animCtrl = controller.animationController;
-
-    // Create intervals for staggered animations
     final intervals = StaggeredIntervals(
       totalFields: 4, // Header, email, password, button
       endTime: 0.8,
@@ -64,7 +61,7 @@ class LoginView extends GetView<LoginController> {
                               TextSpan(
                                 text: 'OpticScan',
                                 style: TextStyle(
-                                  color: Color(0xFF146EF5),
+                                  color: primaryColor,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 16,
                                 ),
@@ -155,7 +152,7 @@ class LoginView extends GetView<LoginController> {
                                         controller.isPasswordVisible.value
                                             ? Icons.visibility_off
                                             : Icons.visibility,
-                                        color: const Color(0xFF146EF5),
+                                        color: primaryColor,
                                       ),
                                       onPressed:
                                           controller.togglePasswordVisibility,
@@ -255,9 +252,7 @@ class LoginView extends GetView<LoginController> {
                         // =============== CREATE ACCOUNT BUTTON ===============
                         AnimatedButton(
                           child: OutlinedButton(
-                            onPressed: () {
-                              Get.offNamed(Routes.SIGNUP);
-                            },
+                            onPressed: () => controller.goToSignup(),
                             style: OutlinedButton.styleFrom(
                               minimumSize: const Size(double.infinity, 50),
                               shape: RoundedRectangleBorder(

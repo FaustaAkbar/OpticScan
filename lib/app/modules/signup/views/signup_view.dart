@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:opticscan/app/routes/app_pages.dart';
 import 'package:opticscan/utils/animations/animation.dart';
+import 'package:opticscan/utils/constants/color.dart';
 import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
 
 import '../controllers/signup_controller.dart';
@@ -11,11 +11,8 @@ class SignupView extends GetView<SignupController> {
   const SignupView({super.key});
   @override
   Widget build(BuildContext context) {
-    // Get the animation controller directly from the controller
     final animationController = controller.animationController;
-
-    // Create intervals for staggered animations
-    final _intervals = StaggeredIntervals(
+    final intervals = StaggeredIntervals(
       totalFields: 6, // Header, name, birth date, email, password, button
       endTime: 0.8,
     );
@@ -36,8 +33,8 @@ class SignupView extends GetView<SignupController> {
                   // =============== HEADER ===============
                   StaggeredFormField(
                     controller: animationController,
-                    startInterval: _intervals.getFieldInterval(0)['start']!,
-                    endInterval: _intervals.getFieldInterval(0)['end']!,
+                    startInterval: intervals.getFieldInterval(0)['start']!,
+                    endInterval: intervals.getFieldInterval(0)['end']!,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -63,7 +60,7 @@ class SignupView extends GetView<SignupController> {
                               TextSpan(
                                 text: 'OpticScan',
                                 style: TextStyle(
-                                  color: Color(0xFF146EF5),
+                                  color: primaryColor,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 16,
                                 ),
@@ -87,8 +84,8 @@ class SignupView extends GetView<SignupController> {
                   // =============== NAME FIELD ===============
                   StaggeredFormField(
                     controller: animationController,
-                    startInterval: _intervals.getFieldInterval(1)['start']!,
-                    endInterval: _intervals.getFieldInterval(1)['end']!,
+                    startInterval: intervals.getFieldInterval(1)['start']!,
+                    endInterval: intervals.getFieldInterval(1)['end']!,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -122,8 +119,8 @@ class SignupView extends GetView<SignupController> {
                   // =============== BIRTH DATE FIELD ===============
                   StaggeredFormField(
                     controller: animationController,
-                    startInterval: _intervals.getFieldInterval(2)['start']!,
-                    endInterval: _intervals.getFieldInterval(2)['end']!,
+                    startInterval: intervals.getFieldInterval(2)['start']!,
+                    endInterval: intervals.getFieldInterval(2)['end']!,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -170,7 +167,7 @@ class SignupView extends GetView<SignupController> {
                                       ),
                                     ),
                                     const Icon(Icons.calendar_today,
-                                        color: Color(0xFF146EF5)),
+                                        color: primaryColor),
                                   ],
                                 ),
                               ),
@@ -193,8 +190,8 @@ class SignupView extends GetView<SignupController> {
                   // =============== EMAIL FIELD ===============
                   StaggeredFormField(
                     controller: animationController,
-                    startInterval: _intervals.getFieldInterval(3)['start']!,
-                    endInterval: _intervals.getFieldInterval(3)['end']!,
+                    startInterval: intervals.getFieldInterval(3)['start']!,
+                    endInterval: intervals.getFieldInterval(3)['end']!,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -229,8 +226,8 @@ class SignupView extends GetView<SignupController> {
                   // =============== PASSWORD FIELD ===============
                   StaggeredFormField(
                     controller: animationController,
-                    startInterval: _intervals.getFieldInterval(4)['start']!,
-                    endInterval: _intervals.getFieldInterval(4)['end']!,
+                    startInterval: intervals.getFieldInterval(4)['start']!,
+                    endInterval: intervals.getFieldInterval(4)['end']!,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -269,7 +266,7 @@ class SignupView extends GetView<SignupController> {
                                         controller.isPasswordVisible.value
                                             ? Icons.visibility_off
                                             : Icons.visibility,
-                                        color: const Color(0xFF146EF5),
+                                        color: primaryColor,
                                       ),
                                       onPressed:
                                           controller.togglePasswordVisibility,
@@ -286,8 +283,8 @@ class SignupView extends GetView<SignupController> {
                   // =============== SIGN-UP BUTTON ===============
                   StaggeredFormField(
                     controller: animationController,
-                    startInterval: _intervals.getFieldInterval(5)['start']!,
-                    endInterval: _intervals.getFieldInterval(5)['end']!,
+                    startInterval: intervals.getFieldInterval(5)['start']!,
+                    endInterval: intervals.getFieldInterval(5)['end']!,
                     child: Obx(() => AnimatedButton(
                           isLoading: controller.isLoading.value,
                           loadingWidget: ElevatedButton(
@@ -362,9 +359,7 @@ class SignupView extends GetView<SignupController> {
                         // =============== LOGIN BUTTON ===============
                         AnimatedButton(
                           child: OutlinedButton(
-                            onPressed: () {
-                              Get.offNamed(Routes.LOGIN);
-                            },
+                            onPressed: () => controller.goToLogin(),
                             style: OutlinedButton.styleFrom(
                               minimumSize: const Size(double.infinity, 50),
                               shape: RoundedRectangleBorder(

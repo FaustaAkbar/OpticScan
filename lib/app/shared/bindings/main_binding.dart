@@ -6,7 +6,7 @@ import 'package:opticscan/app/modules/riwayat/controllers/riwayat_controller.dar
 class MainBinding extends Bindings {
   @override
   void dependencies() {
-    // INISIALISASI SEMUA CONTROLLER YANG MUNGKIN DIBUTUHKAN
+    // inisialisasi controller
     Get.lazyPut<HomeController>(() => HomeController());
     Get.lazyPut<RiwayatController>(() => RiwayatController());
     Get.lazyPut<ProfileController>(() => ProfileController());

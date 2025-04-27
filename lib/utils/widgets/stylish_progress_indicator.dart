@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:opticscan/utils/constants/color.dart';
 
 class StylishProgressIndicator extends StatelessWidget {
   final double size;
@@ -18,7 +19,7 @@ class StylishProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color indicatorColor = color ?? const Color(0xFF146EF5);
+    final Color indicatorColor = color ?? primaryColor;
     final Color bgColor = backgroundColor ?? Colors.blue.withOpacity(0.2);
 
     return Container(
