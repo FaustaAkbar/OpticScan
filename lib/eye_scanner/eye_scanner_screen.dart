@@ -4,6 +4,7 @@
 /* import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:opticscan/form_submit/Eye_Scanner_Result.dart';
 
 class EyeScannerScreen extends StatefulWidget {
   @override
@@ -124,7 +125,7 @@ class _EyeScannerScreenState extends State<EyeScannerScreen> {
 
                 // Tombol Kamera dan Galeri
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 30),
+                  padding: const EdgeInsets.only(bottom: 30, right: 100),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -143,7 +144,14 @@ class _EyeScannerScreenState extends State<EyeScannerScreen> {
                         onTap: () async {
                           final XFile? file = await _controller!.takePicture();
                           if (file != null) {
-                            print("Foto disimpan di: ${file.path}");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EyeScanResultScreen(
+                                  imagePath: file.path,
+                                ),
+                              ),
+                            );
                           }
                         },
                         child: Container(
