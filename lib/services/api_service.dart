@@ -519,28 +519,42 @@ class ApiService {
           contentType: MediaType.parse(contentType),
         ),
       });
+      int retryCount = 0;
+      const maxRetries = 3;
+      const retryDelay = Duration(seconds: 2);
+      while (retryCount < maxRetries) {
+        try {
+          final response = await _dio.patch(
+            ApiConstants.changeProfilePicEndpoint,
+            data: formData,
+            options: Options(
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+              receiveTimeout: const Duration(seconds: 60),
+              sendTimeout: const Duration(seconds: 60),
+            ),
+          );
 
-      final response = await _dio.patch(
-        ApiConstants.changeProfilePicEndpoint,
-        data: formData,
-        options: Options(
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        return ApiResponse(
-          success: true,
-          message: response.data['message'],
-          data: response.data['file'],
-        );
+          if (response.statusCode == 200) {
+            return ApiResponse(
+              success: true,
+              message: response.data['message'],
+              data: response.data['file'],
+            );
+          }
+        } catch (e) {
+          if (retryCount == maxRetries - 1) {
+            rethrow;
+          }
+          await Future.delayed(retryDelay);
+          retryCount++;
+        }
       }
 
       return ApiResponse(
         success: false,
-        message: response.data['message'] ?? 'Failed to change profile picture',
+        message: 'Failed to upload profile picture after $maxRetries attempts',
       );
     } on DioException catch (e) {
       return ApiResponse(

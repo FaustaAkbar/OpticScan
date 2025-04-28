@@ -302,10 +302,6 @@ class ProfileController extends GetxController {
           final date = DateTime.parse(birthdate.value);
           formattedBirthdate.value = DateFormat('dd MMMM yyyy').format(date);
         }
-        // upload gambar jika dipilih (lakukan secara paralel)
-        if (selectedImage.value != null) {
-          await uploadProfilePic();
-        }
         // tampilkan pesan sukses
         showSaved.value = true;
         // hide pesan sukses setelah delay dan tampilkan dialog
@@ -358,18 +354,25 @@ class ProfileController extends GetxController {
 
   // ========= upload profile picture =========
   Future<void> uploadProfilePic() async {
-    if (selectedImage.value == null) return;
+    if (selectedImage.value == null) {
+      Get.snackbar(
+        'Error',
+        'Please select an image first',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
 
     try {
       isUploadingImage.value = true;
       final response =
           await _userService.changeProfilePic(selectedImage.value!);
-
       if (response.success) {
         profilePic.value = response.data;
+        selectedImage.value = null;
         Get.snackbar(
           'Success',
-          response.message,
+          'Profile picture updated successfully',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -386,7 +389,7 @@ class ProfileController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Failed to upload profile picture',
+        'Failed to upload profile picture. Please try again later.',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
