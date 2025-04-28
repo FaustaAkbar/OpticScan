@@ -330,7 +330,7 @@ class ProfileController extends GetxController {
     }
   }
 
-  // ========= pick image from gallery =========
+  // ========= pilih gambar dari galeri =========
   Future<void> pickImage() async {
     try {
       final ImagePicker picker = ImagePicker();
