@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:dio/dio.dart';
 import 'package:opticscan/utils/constants/api_constants.dart';
+import 'dart:io';
 
 class UserService extends GetxService {
   final ApiService _apiService = ApiService();
@@ -182,15 +183,12 @@ class UserService extends GetxService {
     );
   }
 
-  // ========= ubah gambar profile =========
-  Future<ApiResponse> changeProfilePicture(String imagePath) async {
-    final response = await _apiService.changeProfilePicture(imagePath);
-
-    // refresh data user jika update berhasil
-    if (response.success) {
-      await _fetchUserData();
+  // ========= change profile picture =========
+  Future<ApiResponse> changeProfilePic(File imageFile) async {
+    final response = await _apiService.changeProfilePic(imageFile);
+    if (response.success && response.data != null) {
+      userData.value['profile_pic'] = response.data;
     }
-
     return response;
   }
 

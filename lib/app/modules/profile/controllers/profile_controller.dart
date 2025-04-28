@@ -304,7 +304,7 @@ class ProfileController extends GetxController {
         }
         // upload gambar jika dipilih (lakukan secara paralel)
         if (selectedImage.value != null) {
-          await uploadProfileImage();
+          await uploadProfilePic();
         }
         // tampilkan pesan sukses
         showSaved.value = true;
@@ -330,33 +330,67 @@ class ProfileController extends GetxController {
     }
   }
 
-  // ========= pilih gambar dari galeri =========
+  // ========= pick image from gallery =========
   Future<void> pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 85,
+      );
 
-    if (pickedFile != null) {
-      selectedImage.value = File(pickedFile.path);
+      if (image != null) {
+        selectedImage.value = File(image.path);
+        await uploadProfilePic();
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to pick image',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
-  // ========= upload gambar profile =========
-  Future<void> uploadProfileImage() async {
+  // ========= upload profile picture =========
+  Future<void> uploadProfilePic() async {
     if (selectedImage.value == null) return;
-    isUploadingImage.value = true;
+
     try {
-      final response = await _userService.changeProfilePicture(
-        selectedImage.value!.path,
-      );
+      isUploadingImage.value = true;
+      final response =
+          await _userService.changeProfilePic(selectedImage.value!);
+
       if (response.success) {
-        // update gambar profile
-        profilePic.value = response.data ?? '';
-        selectedImage.value = null;
+        profilePic.value = response.data;
+        Get.snackbar(
+          'Success',
+          response.message,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
       } else {
-        _showErrorSnackbar(response.message);
+        Get.snackbar(
+          'Error',
+          response.message,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
     } catch (e) {
-      _showErrorSnackbar('An error occurred while uploading image');
+      Get.snackbar(
+        'Error',
+        'Failed to upload profile picture',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isUploadingImage.value = false;
     }

@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:opticscan/utils/constants/api_constants.dart';
+import 'dart:io';
+import 'package:http_parser/http_parser.dart';
 
 class ApiResponse {
   final bool success;
@@ -494,42 +496,62 @@ class ApiService {
   }
 
   // ========= ubah gambar profile =========
-  Future<ApiResponse> changeProfilePicture(String imagePath) async {
+  Future<ApiResponse> changeProfilePic(File imageFile) async {
     try {
-      final formData = FormData.fromMap({
+      String fileName = imageFile.path.split('/').last;
+      String extension = fileName.split('.').last.toLowerCase();
+      if (!['jpg', 'jpeg', 'png'].contains(extension)) {
+        return ApiResponse(
+          success: false,
+          message: 'Hanya boleh upload gambar (jpeg, jpg, png)',
+        );
+      }
+
+      String contentType = 'image/jpeg';
+      if (extension == 'png') {
+        contentType = 'image/png';
+      }
+
+      FormData formData = FormData.fromMap({
         'profile_pic': await MultipartFile.fromFile(
-          imagePath,
-          filename: 'profile_pic.jpg',
+          imageFile.path,
+          filename: fileName,
+          contentType: MediaType.parse(contentType),
         ),
       });
+
       final response = await _dio.patch(
         ApiConstants.changeProfilePicEndpoint,
         data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
       );
+
       if (response.statusCode == 200) {
         return ApiResponse(
           success: true,
-          message: response.data['message'] ??
-              'Profile picture updated successfully',
+          message: response.data['message'],
           data: response.data['file'],
         );
-      } else {
-        return ApiResponse(
-          success: false,
-          message:
-              response.data['message'] ?? 'Failed to update profile picture',
-        );
       }
+
+      return ApiResponse(
+        success: false,
+        message: response.data['message'] ?? 'Failed to change profile picture',
+      );
     } on DioException catch (e) {
       return ApiResponse(
         success: false,
         message:
-            e.response?.data?['message'] ?? 'Failed to update profile picture',
+            e.response?.data['message'] ?? 'Failed to change profile picture',
       );
     } catch (e) {
       return ApiResponse(
         success: false,
-        message: 'An unexpected error occurred',
+        message: 'Failed to change profile picture',
       );
     }
   }

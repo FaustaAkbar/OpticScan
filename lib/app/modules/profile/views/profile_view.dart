@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:opticscan/utils/constants/color.dart';
 import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
+import 'package:opticscan/utils/constants/api_constants.dart';
 
 import '../controllers/profile_controller.dart';
 
@@ -97,19 +98,21 @@ class ProfileView extends GetView<ProfileController> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(50),
-                  child: Image.network(
-                    controller.profileImageUrl,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      width: 100,
-                      height: 100,
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.person,
-                          size: 50, color: Colors.grey),
-                    ),
-                  ),
+                  child: controller.profilePic.value.isNotEmpty
+                      ? Image.network(
+                          '${ApiConstants.baseUrlEmulator}${ApiConstants.profileImageBaseUrl}/${controller.profilePic.value}',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              'assets/images/blank-profile-pic.png',
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          'assets/images/blank-profile-pic.png',
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
             ),
@@ -359,61 +362,43 @@ class ProfileView extends GetView<ProfileController> {
                   Center(
                     child: Stack(
                       children: [
-                        Obx(() {
-                          if (controller.selectedImage.value != null) {
-                            // tampilkan gambar yang dipilih
-                            return Container(
-                              width: 120,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.orange,
-                                  width: 3,
-                                ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(60),
-                                child: Image.file(
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.orange,
+                              width: 3,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(60),
+                            child: Obx(() {
+                              if (controller.selectedImage.value != null) {
+                                return Image.file(
                                   controller.selectedImage.value!,
                                   width: 120,
                                   height: 120,
                                   fit: BoxFit.cover,
-                                ),
-                              ),
-                            );
-                          } else {
-                            // tampilkan gambar profile saat ini
-                            return Container(
-                              width: 120,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.orange,
-                                  width: 3,
-                                ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(60),
-                                child: Image.network(
-                                  controller.profileImageUrl,
+                                );
+                              } else {
+                                return Image.network(
+                                  '${ApiConstants.baseUrlEmulator}${ApiConstants.profileImageBaseUrl}/${controller.profilePic.value}',
                                   width: 120,
                                   height: 120,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Container(
-                                    width: 120,
-                                    height: 120,
-                                    color: Colors.grey[300],
-                                    child: const Icon(Icons.person,
-                                        size: 60, color: Colors.grey),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-                        }),
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      'assets/images/blank-profile-pic.png',
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                );
+                              }
+                            }),
+                          ),
+                        ),
                         Positioned(
                           bottom: 0,
                           right: 0,
@@ -434,10 +419,24 @@ class ProfileView extends GetView<ProfileController> {
                                 color: Colors.white,
                                 size: 20,
                               ),
-                              onPressed: () => controller.pickImage(),
+                              onPressed: controller.isUploadingImage.value
+                                  ? null
+                                  : () => controller.pickImage(),
                             ),
                           ),
                         ),
+                        if (controller.isUploadingImage.value)
+                          Positioned.fill(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                child: StylishProgressIndicator(size: 30),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
