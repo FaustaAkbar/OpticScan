@@ -53,12 +53,13 @@ class SplashscreenController extends GetxController
     try {
       // ambil service User
       _userService = Get.find<UserService>();
-      await _userService.checkAuthStatus();
+      // cek apakah user sudah login
+      final isAuthenticated = await _userService.checkAuthStatus();
+
       await Future.delayed(const Duration(milliseconds: 1000));
       textController.forward().then((_) {
         // navigasi ke HOME jika sudah login, jika tidak maka ke LOGIN
-        String route =
-            _userService.isLoggedIn.value ? Routes.HOME : Routes.LOGIN;
+        String route = isAuthenticated ? Routes.HOME : Routes.LOGIN;
         Get.offNamed(
           route,
           arguments: {
