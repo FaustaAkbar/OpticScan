@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:opticscan/app/modules/riwayat/controllers/riwayat_controller.dart';
-import 'package:opticscan/services/examination_service.dart';
+import 'package:IntelliSight/app/modules/riwayat/controllers/riwayat_controller.dart';
+import 'package:IntelliSight/services/examination_service.dart';
 
 class RiwayatBinding extends Bindings {
   @override

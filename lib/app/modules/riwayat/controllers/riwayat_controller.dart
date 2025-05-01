@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:opticscan/app/routes/app_pages.dart';
-import 'package:opticscan/services/examination_service.dart';
-import 'package:opticscan/utils/constants/api_constants.dart';
+import 'package:IntelliSight/app/routes/app_pages.dart';
+import 'package:IntelliSight/services/examination_service.dart';
+import 'package:IntelliSight/utils/constants/api_constants.dart';
 
 class ExaminationRecord {
   final int examinationId;

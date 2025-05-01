@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:opticscan/utils/theme/custom_themes/elevated_button_theme.dart';
-import 'package:opticscan/utils/theme/custom_themes/outlined_button_theme.dart';
-import 'package:opticscan/utils/theme/custom_themes/text_field_theme.dart';
+import 'package:IntelliSight/utils/theme/custom_themes/elevated_button_theme.dart';
+import 'package:IntelliSight/utils/theme/custom_themes/outlined_button_theme.dart';
+import 'package:IntelliSight/utils/theme/custom_themes/text_field_theme.dart';
 
 class OAppTheme {
   OAppTheme._();

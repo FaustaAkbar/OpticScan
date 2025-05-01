@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:opticscan/app/routes/app_pages.dart';
+import 'package:IntelliSight/app/routes/app_pages.dart';
 
 class HomeController extends GetxController {
   //TODO: Implement HomeController

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:opticscan/utils/constants/api_constants.dart';
+import 'package:IntelliSight/utils/constants/api_constants.dart';
 import 'dart:io';
 import 'package:http_parser/http_parser.dart';
 

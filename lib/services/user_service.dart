@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
-import 'package:opticscan/services/api_service.dart';
+import 'package:IntelliSight/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:dio/dio.dart';
-import 'package:opticscan/utils/constants/api_constants.dart';
+import 'package:IntelliSight/utils/constants/api_constants.dart';
 import 'dart:io';
 
 class UserService extends GetxService {

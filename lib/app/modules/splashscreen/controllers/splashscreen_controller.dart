@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:opticscan/app/routes/app_pages.dart';
-import 'package:opticscan/utils/animations/animation.dart';
-import 'package:opticscan/services/user_service.dart';
+import 'package:IntelliSight/app/routes/app_pages.dart';
+import 'package:IntelliSight/utils/animations/animation.dart';
+import 'package:IntelliSight/services/user_service.dart';
 
 class SplashscreenController extends GetxController
     with GetTickerProviderStateMixin {

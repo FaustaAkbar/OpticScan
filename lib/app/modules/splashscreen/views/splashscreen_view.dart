@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:opticscan/utils/constants/color.dart';
+import 'package:IntelliSight/utils/constants/color.dart';
 
 import '../controllers/splashscreen_controller.dart';
 
@@ -51,9 +51,10 @@ class _SplashContentState extends State<_SplashContent> {
                             color: primaryColor.withAlpha(25),
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(
-                            Icons.visibility_outlined,
-                            size: 40,
+                          child: Image.asset(
+                            'assets/icons/icon.png',
+                            width: 20,
+                            height: 20,
                             color: primaryColor,
                           ),
                         ),

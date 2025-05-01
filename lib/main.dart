@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:opticscan/app/shared/bindings/initial_binding.dart';
-import 'package:opticscan/utils/theme/theme.dart';
+import 'package:IntelliSight/app/shared/bindings/initial_binding.dart';
+import 'package:IntelliSight/utils/theme/theme.dart';
 
 import 'app/routes/app_pages.dart';
 

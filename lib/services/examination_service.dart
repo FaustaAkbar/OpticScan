@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:opticscan/services/api_service.dart';
+import 'package:IntelliSight/services/api_service.dart';
 
 class ExaminationService extends GetxService {
   final ApiService _apiService = Get.find<ApiService>();

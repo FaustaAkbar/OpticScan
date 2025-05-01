@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:opticscan/utils/constants/color.dart';
-import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
+import 'package:IntelliSight/utils/constants/color.dart';
+import 'package:IntelliSight/utils/widgets/stylish_progress_indicator.dart';
 import '../controllers/riwayat_controller.dart';
 
 class AppStyles {
