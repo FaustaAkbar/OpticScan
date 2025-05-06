@@ -89,7 +89,7 @@ class EyescannerView extends GetView<EyescannerController> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 50),
+                        padding: const EdgeInsets.only(right: 0),
                         child: IconButton(
                           icon: const Icon(Icons.image,
                               color: Colors.white, size: 32),
