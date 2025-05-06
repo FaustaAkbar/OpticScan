@@ -3,7 +3,7 @@
 class ApiConstants {
   // Base URLs
   static const String baseUrlEmulator =
-      'https://ws1qtsds-4000.asse.devtunnels.ms'; // nanti ganti dengan base url server
+      'https://intellisight.humicprototyping.com'; // nanti ganti dengan base url server
 
   // Auth endpoints
   static const String loginEndpoint = '/auth/login'; // POST
