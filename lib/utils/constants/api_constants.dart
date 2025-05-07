@@ -3,7 +3,7 @@
 class ApiConstants {
   // Base URLs
   static const String baseUrlEmulator =
-      'https://intellisight.humicprototyping.com'; // nanti ganti dengan base url server
+      'https://intellisight-api.humicprototyping.com'; // nanti ganti dengan base url server
 
   // Auth endpoints
   static const String loginEndpoint = '/auth/login'; // POST
@@ -15,7 +15,7 @@ class ApiConstants {
   // Examination endpoints
   static const String getExamResultsEndpoint = '/exam/my-result'; // GET
   static const String submitExamEndpoint =
-      '/exam/submit-exam'; // POST (dengan file upload)
+      baseUrlEmulator + '/exam/submit-exam'; // POST (dengan file upload)
   static const String diagnosisDokterEndpoint =
       '/exam/diagnosis-dokter'; // POST
 

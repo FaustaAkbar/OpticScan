@@ -5,6 +5,7 @@ import 'package:opticscan/form_submit/eye_scan_result_service.dart';
 import 'package:opticscan/services/user_service.dart';
 
 class EyeScanResultController extends GetxController {
+  final nameController = TextEditingController(); // Tambahkan ini
   final complaintController = TextEditingController();
   final Rx<File?> imageFile = Rx<File?>(null);
   final isLoading = false.obs;
@@ -13,10 +14,11 @@ class EyeScanResultController extends GetxController {
   final UserService _userService = Get.find<UserService>();
 
   Future<void> submitScan() async {
+    final name = nameController.text.trim(); // Ambil nama
     final complaint = complaintController.text.trim();
     final image = imageFile.value;
 
-    if (complaint.isEmpty || image == null) {
+    if (name.isEmpty || complaint.isEmpty || image == null) {
       Get.snackbar('Error', 'Lengkapi semua data!',
           backgroundColor: Colors.red, colorText: Colors.white);
       return;
@@ -25,9 +27,8 @@ class EyeScanResultController extends GetxController {
     isLoading.value = true;
 
     try {
-      final userId = _userService.userId;
-
       final response = await _scanService.submitScan(
+        name: name, // Kirim nama
         complaint: complaint,
         image: image,
       );
@@ -35,8 +36,9 @@ class EyeScanResultController extends GetxController {
       if (response.success) {
         Get.snackbar('Berhasil', response.message,
             backgroundColor: Colors.green, colorText: Colors.white);
-        complaintController.clear();
-        imageFile.value = null;
+        nameController.clear(); // Reset nama
+        complaintController.clear(); // Reset keluhan
+        imageFile.value = null; // Reset gambar
       } else {
         Get.snackbar('Gagal', response.message,
             backgroundColor: Colors.red, colorText: Colors.white);

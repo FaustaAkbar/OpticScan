@@ -71,7 +71,36 @@ class EyeScanResultScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 45),
+            const SizedBox(height: 35),
+
+            /// Field Nama
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: TextField(
+                  controller: _controller.nameController,
+                  decoration: const InputDecoration(
+                    hintText: "Nama Anda",
+                    hintStyle: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            /// Field Keluhan
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
@@ -96,7 +125,10 @@ class EyeScanResultScreen extends StatelessWidget {
                 ),
               ),
             ),
+
             const SizedBox(height: 30),
+
+            /// Tombol Submit
             Container(
               height: 30,
               child: Padding(

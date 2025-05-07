@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:opticscan/form_submit/Eye_Scanner_Result.dart';
 
 class EyescannerController extends GetxController {
   final isCameraInitialized = false.obs;
@@ -77,7 +78,7 @@ class EyescannerController extends GetxController {
           await ImagePicker().pickImage(source: ImageSource.gallery);
       if (image != null) {
         print("Gambar dari galeri: ${image.path}");
-        return image.path;
+        Get.to(() => EyeScanResultScreen(imagePath: image.path));
       }
     } catch (e) {
       print("Error picking image: $e");
