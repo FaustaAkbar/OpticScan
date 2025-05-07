@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:opticscan/app/routes/app_pages.dart';
 import 'package:opticscan/app/shared/bindings/main_binding.dart';
 import 'package:opticscan/app/shared/widgets/main_layout.dart';
+import 'package:opticscan/form_submit/Eye_Scanner_Result.dart';
 
 import '../controllers/eyescanner_controller.dart';
 
@@ -55,16 +56,11 @@ class EyescannerView extends GetView<EyescannerController> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(
-                    height: 50), // Memberi jarak antara atas dan teks
-
-                // Teks Judul
+                const SizedBox(height: 50),
                 const Text(
                   "Ambil gambar mata",
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
-
-                // Kotak Fokus Scanner
                 Stack(
                   alignment: Alignment.center,
                   children: [
@@ -78,10 +74,7 @@ class EyescannerView extends GetView<EyescannerController> {
                     ),
                   ],
                 ),
-
                 const Spacer(),
-
-                // Tombol Kamera dan Galeri
                 Padding(
                   padding: const EdgeInsets.only(bottom: 30),
                   child: Row(
@@ -96,10 +89,18 @@ class EyescannerView extends GetView<EyescannerController> {
                           onPressed: controller.pickImageFromGallery,
                         ),
                       ),
-                      // Spacer untuk menyesuaikan posisi di tengah
-
                       GestureDetector(
-                        onTap: controller.takePicture,
+                        onTap: () async {
+                          final imagePath = await controller.takePicture();
+                          if (imagePath != null) {
+                            Get.to(() =>
+                                EyeScanResultScreen(imagePath: imagePath));
+                          } else {
+                            Get.snackbar('Error', 'Gagal mengambil gambar',
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white);
+                          }
+                        },
                         child: Container(
                           width: 70,
                           height: 70,
@@ -109,7 +110,6 @@ class EyescannerView extends GetView<EyescannerController> {
                           ),
                         ),
                       ),
-                      // Spacer agar tetap seimbang
                     ],
                   ),
                 ),

@@ -12,7 +12,6 @@ class EyeScanResultController extends GetxController {
   final EyeScanResultService _scanService = EyeScanResultService();
   final UserService _userService = Get.find<UserService>();
 
-  // Submit data scan
   Future<void> submitScan() async {
     final complaint = complaintController.text.trim();
     final image = imageFile.value;
@@ -26,7 +25,6 @@ class EyeScanResultController extends GetxController {
     isLoading.value = true;
 
     try {
-      // (opsional) ambil userId
       final userId = _userService.userId;
 
       final response = await _scanService.submitScan(
