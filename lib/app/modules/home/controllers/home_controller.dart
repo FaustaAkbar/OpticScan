@@ -39,8 +39,10 @@ class HomeController extends GetxController {
   void fetchUserCounts() async {
     try {
       final result = await _apiService.fetchUserCounts();
-      totalPasien.value = result['total_pasien'] ?? 0;
-      totalDokter.value = result['total_dokter'] ?? 0;
+      totalPasien.value = result.data['total_pasien'] ?? 0;
+      totalDokter.value = result.data['total_dokter'] ?? 0;
+      // totalPasien.value = result['total_pasien'] ?? 0;
+      // totalDokter.value = result['total_dokter'] ?? 0;
     } catch (e) {
       print('Gagal mengambil data user count: $e');
     }

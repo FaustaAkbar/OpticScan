@@ -48,7 +48,8 @@ class ExaminationRecord {
     );
   }
 
-  String get eyeImageUrl => '${ApiConstants.eyeImageBaseUrl}$eyePic';
+  String get eyeImageUrl =>
+      "${ApiConstants.baseUrlEmulator}${ApiConstants.eyeImageBaseUrl}/$eyePic";
 }
 
 class RiwayatController extends GetxController {

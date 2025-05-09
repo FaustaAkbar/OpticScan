@@ -571,22 +571,26 @@ class ApiService {
   }
 
   //total dokter dan pasien
-  Future<Map<String, int>> fetchUserCounts() async {
+  Future<ApiResponse> fetchUserCounts() async {
     try {
-      final response = await Dio().get(
+      final response = await _dio.get(
           '${ApiConstants.baseUrlEmulator}${ApiConstants.getUsersCountEndpoint}');
 
-      if (response.statusCode == 200 && response.data['data'] != null) {
-        final data = response.data['data'];
-        return {
-          'total_pasien': data['total_pasien'],
-          'total_dokter': data['total_dokter'],
-        };
+      if (response.statusCode == 200) {
+        return ApiResponse(
+          success: true,
+          message: 'Examination results retrieved successfully',
+          data: response.data['data'],
+        );
       } else {
-        throw Exception(response.data['message'] ?? 'Unknown error');
+        return ApiResponse(
+            success: false,
+            message:
+                response.data['message'] ?? 'Failed to get examination result');
       }
     } catch (e) {
-      throw Exception('Failed to fetch user counts: $e');
+      print('object data repo 2 :');
+      throw Exception('Failed to fetch user counts: ${e.toString()}');
     }
   }
 }
