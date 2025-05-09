@@ -78,38 +78,42 @@ class EyescannerView extends GetView<EyescannerController> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 30),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 0),
+                        padding: const EdgeInsets.only(left: 70),
                         child: IconButton(
                           icon: const Icon(Icons.image,
                               color: Colors.white, size: 32),
                           onPressed: controller.pickImageFromGallery,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () async {
-                          final imagePath = await controller.takePicture();
-                          if (imagePath != null) {
-                            Get.to(() =>
-                                EyeScanResultScreen(imagePath: imagePath));
-                          } else {
-                            Get.snackbar('Error', 'Gagal mengambil gambar',
-                                backgroundColor: Colors.red,
-                                colorText: Colors.white);
-                          }
-                        },
-                        child: Container(
-                          width: 70,
-                          height: 70,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
+                      Padding(
+                        padding: const EdgeInsets.only(right: 118),
+                        child: GestureDetector(
+                          onTap: () async {
+                            final imagePath = await controller.takePicture();
+                            if (imagePath != null) {
+                              Get.to(() =>
+                                  EyeScanResultScreen(imagePath: imagePath));
+                            } else {
+                              Get.snackbar('Error', 'Gagal mengambil gambar',
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white);
+                            }
+                          },
+                          child: Container(
+                            width: 70,
+                            height: 70,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
+                      Container()
                     ],
                   ),
                 ),
