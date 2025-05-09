@@ -11,6 +11,7 @@ class UserService extends GetxService {
   final RxBool isLoggedIn = false.obs;
   final RxString userRole = ''.obs;
   final RxMap<String, dynamic> userData = <String, dynamic>{}.obs;
+  final Dio _dio = Dio(BaseOptions(baseUrl: ApiConstants.baseUrlEmulator));
 
   Future<UserService> init() async {
     await checkAuthStatus();
@@ -198,5 +199,25 @@ class UserService extends GetxService {
       return '${ApiConstants.profileImageBaseUrl}${ApiConstants.defaultProfileImage}';
     }
     return '${ApiConstants.profileImageBaseUrl}$profilePic';
+  }
+
+  // ========= ambil total pasien & dokter =========
+  Future<Map<String, int>> fetchUserCounts() async {
+    try {
+      final response = await Dio().get(
+          '${ApiConstants.baseUrlEmulator}${ApiConstants.getUsersCountEndpoint}');
+
+      if (response.statusCode == 200 && response.data['data'] != null) {
+        final data = response.data['data'];
+        return {
+          'total_pasien': data['total_pasien'],
+          'total_dokter': data['total_dokter'],
+        };
+      } else {
+        throw Exception(response.data['message'] ?? 'Unknown error');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch user counts: $e');
+    }
   }
 }

@@ -59,7 +59,7 @@ class RiwayatController extends GetxController {
   final isLoading = false.obs;
   final errorMessage = ''.obs;
   final hasError = false.obs;
-
+  final totalScans = 0.obs;
   @override
   void onInit() {
     super.onInit();
@@ -79,6 +79,7 @@ class RiwayatController extends GetxController {
         allExaminations.value = examinationsData
             .map((data) => ExaminationRecord.fromJson(data))
             .toList();
+        totalScans.value = allExaminations.length;
       } else {
         hasError.value = true;
         errorMessage.value = response.message;

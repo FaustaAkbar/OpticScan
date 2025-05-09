@@ -569,4 +569,24 @@ class ApiService {
       );
     }
   }
+
+  //total dokter dan pasien
+  Future<Map<String, int>> fetchUserCounts() async {
+    try {
+      final response = await Dio().get(
+          '${ApiConstants.baseUrlEmulator}${ApiConstants.getUsersCountEndpoint}');
+
+      if (response.statusCode == 200 && response.data['data'] != null) {
+        final data = response.data['data'];
+        return {
+          'total_pasien': data['total_pasien'],
+          'total_dokter': data['total_dokter'],
+        };
+      } else {
+        throw Exception(response.data['message'] ?? 'Unknown error');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch user counts: $e');
+    }
+  }
 }

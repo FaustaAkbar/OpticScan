@@ -34,8 +34,9 @@ class EyeScanResultController extends GetxController {
       );
 
       if (response.success) {
-        Get.snackbar('Berhasil', response.message,
-            backgroundColor: Colors.green, colorText: Colors.white);
+        // Get.snackbar('Berhasil', response.message,
+        //     backgroundColor: Colors.green, colorText: Colors.white);
+        _showSuccessDialog(response.message);
         nameController.clear(); // Reset nama
         complaintController.clear(); // Reset keluhan
         imageFile.value = null; // Reset gambar
@@ -49,5 +50,111 @@ class EyeScanResultController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void _showSuccessDialog(String message) {
+    isLoading.value = false;
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // icon sukses
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade100,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF146EF5),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 36,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // judul sukses
+              const Text(
+                'Data Berhasil Dikirim',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // pesan sukses
+              const Text(
+                'Mohon menunggu hasil ya',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // tombol kembali
+              Center(
+                child: SizedBox(
+                  width: 219,
+                  height: 29,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Get.back(); // tutup dialog
+                      // Tambahkan logika jika ingin kembali ke halaman tertentu
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF146EF5),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: const BorderSide(
+                          color: Color(0xFF146EF5),
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      'Kembali',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
   }
 }

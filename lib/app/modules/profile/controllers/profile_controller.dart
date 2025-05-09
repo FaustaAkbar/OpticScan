@@ -419,7 +419,7 @@ class ProfileController extends GetxController {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Colors.blue,
+              primary: primaryColor,
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
@@ -454,249 +454,256 @@ class ProfileController extends GetxController {
     final formKey = GlobalKey<FormState>();
 
     Get.dialog(
-      AlertDialog(
-        backgroundColor: Colors.white,
-        title: Column(
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: primaryColor.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.lock_outline,
-                color: primaryColor,
-                size: 30,
-              ),
+      Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        child: SingleChildScrollView(
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: backgroundLight,
+              borderRadius: BorderRadius.circular(20),
             ),
-            const SizedBox(height: 16),
-            const Text(
-              'Change Password',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF333333),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Enter your current password and new password',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
-        ),
-        content: SingleChildScrollView(
-          child: Form(
-            key: formKey,
-            child: Obx(() => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // field password lama
-                    TextFormField(
-                      controller: oldPasswordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: 'Current Password',
-                        hintText: 'Enter your current password',
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 16),
-                        errorText: oldPasswordError.value.isEmpty
-                            ? null
-                            : oldPasswordError.value,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide:
-                              const BorderSide(color: primaryColor, width: 2),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.red),
-                        ),
-                        prefixIcon: const Icon(Icons.lock, color: primaryColor),
-                        fillColor: Colors.white,
-                        filled: true,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Current password is required';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // field password baru
-                    TextFormField(
-                      controller: newPasswordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: 'New Password',
-                        hintText: 'Minimum 6 characters',
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 16),
-                        errorText: newPasswordError.value.isEmpty
-                            ? null
-                            : newPasswordError.value,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide:
-                              const BorderSide(color: primaryColor, width: 2),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.red),
-                        ),
-                        prefixIcon:
-                            const Icon(Icons.vpn_key, color: primaryColor),
-                        fillColor: Colors.white,
-                        filled: true,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'New password is required';
-                        } else if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // field password konfirmasi
-                    TextFormField(
-                      controller: confirmPasswordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: 'Confirm Password',
-                        hintText: 'Repeat your new password',
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 16),
-                        errorText: confirmPasswordError.value.isEmpty
-                            ? null
-                            : confirmPasswordError.value,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide:
-                              const BorderSide(color: primaryColor, width: 2),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.red),
-                        ),
-                        prefixIcon: const Icon(Icons.check_circle_outline,
-                            color: primaryColor),
-                        fillColor: Colors.white,
-                        filled: true,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Confirm password is required';
-                        } else if (value != newPasswordController.text) {
-                          return 'Passwords do not match';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                )),
-          ),
-        ),
-        actions: [
-          Row(
-            children: [
-              // tombol cancel
-              Expanded(
-                child: TextButton(
-                  onPressed: () => Get.back(),
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: BorderSide(color: Colors.grey.shade300),
-                    ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Simple header with icon
+                const SizedBox(height: 24),
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: primaryColor.withOpacity(0.1),
+                    shape: BoxShape.circle,
                   ),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  child: const Icon(
+                    Icons.lock_outline,
+                    color: primaryColor,
+                    size: 30,
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              // tombol ubah
-              Expanded(
-                child: Obx(() => ElevatedButton(
-                      onPressed: isChangingPassword.value
-                          ? null
-                          : () {
-                              if (formKey.currentState!.validate()) {
-                                changePassword();
-                              }
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        disabledBackgroundColor: primaryColor.withOpacity(0.6),
-                      ),
-                      child: isChangingPassword.value
-                          ? const ButtonProgressIndicator()
-                          : const Text(
-                              'Change',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+
+                const SizedBox(height: 16),
+
+                // Title
+                const Text(
+                  'Change Password',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF333333),
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Form Content
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Form(
+                    key: formKey,
+                    child: Obx(() => Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Current Password Field
+                            _buildPasswordField(
+                              controller: oldPasswordController,
+                              label: 'Current Password',
+                              hint: 'Enter your current password',
+                              errorText: oldPasswordError.value,
+                              icon: Icons.lock_outlined,
                             ),
-                    )),
-              ),
-            ],
+                            const SizedBox(height: 16),
+
+                            // New Password Field
+                            _buildPasswordField(
+                              controller: newPasswordController,
+                              label: 'New Password',
+                              hint: 'Minimum 6 characters',
+                              errorText: newPasswordError.value,
+                              icon: Icons.vpn_key_outlined,
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Confirm Password Field
+                            _buildPasswordField(
+                              controller: confirmPasswordController,
+                              label: 'Confirm Password',
+                              hint: 'Repeat your new password',
+                              errorText: confirmPasswordError.value,
+                              icon: Icons.check_circle_outline,
+                            ),
+
+                            const SizedBox(height: 24),
+
+                            // Buttons
+                            Row(
+                              children: [
+                                // Cancel Button
+                                Expanded(
+                                  child: TextButton(
+                                    onPressed: () => Get.back(),
+                                    style: TextButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      foregroundColor: Colors.grey.shade700,
+                                    ),
+                                    child: const Text(
+                                      'Cancel',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+
+                                // Change Button
+                                Expanded(
+                                  child: Obx(() => ElevatedButton(
+                                        onPressed: isChangingPassword.value
+                                            ? null
+                                            : () {
+                                                if (formKey.currentState!
+                                                    .validate()) {
+                                                  changePassword();
+                                                }
+                                              },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: primaryColor,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12),
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          disabledBackgroundColor:
+                                              primaryColor.withOpacity(0.6),
+                                        ),
+                                        child: isChangingPassword.value
+                                            ? const ButtonProgressIndicator()
+                                            : const Text(
+                                                'Change',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                      )),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )),
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+            ),
           ),
-        ],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
         ),
-        contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
-        actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-        titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
       ),
       barrierDismissible: true,
+    );
+  }
+
+  // Helper method to build password fields
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required String errorText,
+    required IconData icon,
+  }) {
+    final bool hasError = errorText.isNotEmpty;
+
+    return Theme(
+      data: ThemeData().copyWith(
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Colors.black,
+          selectionColor: primaryColor.withOpacity(0.3),
+          selectionHandleColor: primaryColor,
+        ),
+      ),
+      child: TextFormField(
+        controller: controller,
+        obscureText: true,
+        cursorColor: Colors.black,
+        style: const TextStyle(fontSize: 15),
+        decoration: InputDecoration(
+          isDense: true,
+          labelText: label,
+          labelStyle: TextStyle(
+            color: hasError ? Colors.red : primaryColor,
+            fontWeight: FontWeight.w500,
+            fontSize: 14,
+          ),
+          hintText: hint,
+          hintStyle: TextStyle(
+            color: hasError ? Colors.red.shade200 : Colors.grey.shade400,
+            fontSize: 13,
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 12,
+          ),
+          errorText: hasError ? errorText : null,
+          errorStyle: const TextStyle(
+            fontSize: 11,
+            color: Colors.red,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide:
+                BorderSide(color: hasError ? Colors.red : Colors.grey.shade300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide:
+                BorderSide(color: hasError ? Colors.red : Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+                color: hasError ? Colors.red : primaryColor, width: 1.5),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.red),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.red, width: 1.5),
+          ),
+          prefixIcon:
+              Icon(icon, color: hasError ? Colors.red : primaryColor, size: 18),
+          fillColor: Colors.white,
+          filled: true,
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            if (label == 'Current Password') {
+              return 'Current password is required';
+            } else if (label == 'New Password') {
+              return 'New password is required';
+            } else {
+              return 'Confirm password is required';
+            }
+          } else if (label == 'New Password' && value.length < 6) {
+            return 'Password must be at least 6 characters';
+          } else if (label == 'Confirm Password' &&
+              value != newPasswordController.text) {
+            return 'Passwords do not match';
+          }
+          return null;
+        },
+      ),
     );
   }
 
@@ -854,7 +861,7 @@ class ProfileController extends GetxController {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: backgroundLight,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
@@ -910,14 +917,13 @@ class ProfileController extends GetxController {
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(12),
                         ),
+                        foregroundColor: Colors.grey.shade700,
                       ),
                       child: const Text(
                         'Cancel',
                         style: TextStyle(
-                          color: Colors.grey,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
