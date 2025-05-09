@@ -7,6 +7,7 @@ import 'package:opticscan/app/routes/app_pages.dart';
 import 'package:opticscan/app/shared/bindings/main_binding.dart';
 import 'package:opticscan/app/shared/widgets/main_layout.dart';
 import 'package:opticscan/app/modules/profile/controllers/profile_controller.dart';
+import 'package:opticscan/utils/constants/api_constants.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -50,11 +51,11 @@ class HomeView extends GetView<HomeController> {
                               Uri.tryParse(profileController.profileImageUrl)
                                       ?.hasAbsolutePath ==
                                   true)
-                          ? NetworkImage(profileController.profileImageUrl)
+                          ? NetworkImage(
+                              // '${ApiConstants.baseUrlEmulator}/${profileController.profileImageUrl}',
+                              '${ApiConstants.baseUrlEmulator}/images/profile-pics/${profileController.profilePic.value}',
+                            )
                           : null,
-                  child: profileController.profilePic.value.isEmpty
-                      ? Icon(Icons.person, color: Colors.blue)
-                      : null,
                 ))
           ],
         ),
