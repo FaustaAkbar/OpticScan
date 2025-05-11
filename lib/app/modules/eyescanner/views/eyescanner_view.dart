@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:IntelliSight/app/routes/app_pages.dart';
 import 'package:IntelliSight/app/shared/bindings/main_binding.dart';
 import 'package:IntelliSight/app/shared/widgets/main_layout.dart';
+import 'package:IntelliSight/form_submit/Eye_Scanner_Result.dart';
 
 import '../controllers/eyescanner_controller.dart';
 
@@ -55,16 +56,11 @@ class EyescannerView extends GetView<EyescannerController> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(
-                    height: 50), // Memberi jarak antara atas dan teks
-
-                // Teks Judul
+                const SizedBox(height: 50),
                 const Text(
                   "Ambil gambar mata",
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
-
-                // Kotak Fokus Scanner
                 Stack(
                   alignment: Alignment.center,
                   children: [
@@ -78,38 +74,46 @@ class EyescannerView extends GetView<EyescannerController> {
                     ),
                   ],
                 ),
-
                 const Spacer(),
-
-                // Tombol Kamera dan Galeri
                 Padding(
                   padding: const EdgeInsets.only(bottom: 30),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 50),
+                        padding: const EdgeInsets.only(left: 70),
                         child: IconButton(
                           icon: const Icon(Icons.image,
                               color: Colors.white, size: 32),
                           onPressed: controller.pickImageFromGallery,
                         ),
                       ),
-                      // Spacer untuk menyesuaikan posisi di tengah
-
-                      GestureDetector(
-                        onTap: controller.takePicture,
-                        child: Container(
-                          width: 70,
-                          height: 70,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
+                      Padding(
+                        padding: const EdgeInsets.only(right: 118),
+                        child: GestureDetector(
+                          onTap: () async {
+                            final imagePath = await controller.takePicture();
+                            if (imagePath != null) {
+                              Get.to(() =>
+                                  EyeScanResultScreen(imagePath: imagePath));
+                            } else {
+                              Get.snackbar('Error', 'Gagal mengambil gambar',
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white);
+                            }
+                          },
+                          child: Container(
+                            width: 70,
+                            height: 70,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
-                      // Spacer agar tetap seimbang
+                      Container()
                     ],
                   ),
                 ),

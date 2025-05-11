@@ -42,13 +42,14 @@ class ExaminationRecord {
       complaints: json['complaints'],
       diagnosis: json['diagnosis'],
       doctorsNote: json['doctors_note'],
-      status: json['status'] == 'ongoing' ? 'On Review' : 'Completed',
+      status: json['status'] == 'ongoing' ? 'On going' : 'Completed',
       patientName: json['patient']?['name'] ?? 'Unknown',
       doctorName: json['doctor']?['name'],
     );
   }
 
-  String get eyeImageUrl => '${ApiConstants.eyeImageBaseUrl}$eyePic';
+  String get eyeImageUrl =>
+      "${ApiConstants.baseUrlEmulator}${ApiConstants.eyeImageBaseUrl}/$eyePic";
 }
 
 class RiwayatController extends GetxController {
@@ -59,7 +60,7 @@ class RiwayatController extends GetxController {
   final isLoading = false.obs;
   final errorMessage = ''.obs;
   final hasError = false.obs;
-
+  final totalScans = 0.obs;
   @override
   void onInit() {
     super.onInit();
@@ -79,6 +80,7 @@ class RiwayatController extends GetxController {
         allExaminations.value = examinationsData
             .map((data) => ExaminationRecord.fromJson(data))
             .toList();
+        totalScans.value = allExaminations.length;
       } else {
         hasError.value = true;
         errorMessage.value = response.message;
@@ -99,7 +101,7 @@ class RiwayatController extends GetxController {
   // ========= mengambil data pemeriksaan berdasarkan tab yang dipilih =========
   List<ExaminationRecord> get filteredExaminations {
     return selectedTab.value == 0
-        ? allExaminations.where((exam) => exam.status == 'On Review').toList()
+        ? allExaminations.where((exam) => exam.status == 'On going').toList()
         : allExaminations.where((exam) => exam.status == 'Completed').toList();
   }
 

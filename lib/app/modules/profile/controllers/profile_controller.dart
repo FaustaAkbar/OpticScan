@@ -107,17 +107,6 @@ class ProfileController extends GetxController {
     });
   }
 
-  @override
-  void onClose() {
-    nameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    oldPasswordController.dispose();
-    newPasswordController.dispose();
-    confirmPasswordController.dispose();
-    super.onClose();
-  }
-
   // ========= load data profile dari backend =========
   Future<void> loadProfileData() async {
     isLoading.value = true;

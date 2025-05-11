@@ -189,42 +189,45 @@ class _HomePageState extends State<HomePage> {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 5)],
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(doctor,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16)),
-                Row(
-                  children: [
-                    const Icon(Icons.access_time,
-                        size: 12, color: Color(0XFF146EF5)),
-                    Text(" $date",
-                        style: const TextStyle(
-                            color: Color(0XFF146EF5),
-                            fontWeight: FontWeight.w500)),
-                  ],
-                ),
-              ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(doctor,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16)),
+                  Row(
+                    children: [
+                      const Icon(Icons.access_time,
+                          size: 12, color: Color(0XFF146EF5)),
+                      Text(" $date",
+                          style: const TextStyle(
+                              color: Color(0XFF146EF5),
+                              fontWeight: FontWeight.w500)),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
-            decoration: BoxDecoration(
-              color: Colors.red.shade50,
-              borderRadius: BorderRadius.circular(8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(diagnosis,
+                  style: TextStyle(
+                      color: Colors.red.shade900,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500)),
             ),
-            child: Text(diagnosis,
-                style: TextStyle(
-                    color: Colors.red.shade900,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500)),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -632,4 +632,28 @@ class ApiService {
       );
     }
   }
+
+  //total dokter dan pasien
+  Future<ApiResponse> fetchUserCounts() async {
+    try {
+      final response = await _dio.get(
+          '${ApiConstants.baseUrlEmulator}${ApiConstants.getUsersCountEndpoint}');
+
+      if (response.statusCode == 200) {
+        return ApiResponse(
+          success: true,
+          message: 'Examination results retrieved successfully',
+          data: response.data['data'],
+        );
+      } else {
+        return ApiResponse(
+            success: false,
+            message:
+                response.data['message'] ?? 'Failed to get examination result');
+      }
+    } catch (e) {
+      print('object data repo 2 :');
+      throw Exception('Failed to fetch user counts: ${e.toString()}');
+    }
+  }
 }

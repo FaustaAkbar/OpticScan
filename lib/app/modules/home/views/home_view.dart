@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:IntelliSight/app/modules/riwayat/controllers/riwayat_controller.dart';
 import 'package:IntelliSight/app/routes/app_pages.dart';
 import 'package:IntelliSight/app/shared/bindings/main_binding.dart';
 import 'package:IntelliSight/app/shared/widgets/main_layout.dart';
-
+import 'package:IntelliSight/app/modules/profile/controllers/profile_controller.dart';
+import 'package:IntelliSight/utils/constants/api_constants.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -13,6 +15,10 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    final profileController = Get.find<ProfileController>();
+    final riwayatController = Get.find<RiwayatController>();
+    final homeController = Get.find<HomeController>();
+
     return Scaffold(
       backgroundColor: Color(0XFFE2E9F1),
       appBar: AppBar(
@@ -26,18 +32,31 @@ class HomeView extends GetView<HomeController> {
               children: [
                 Text("Hello,",
                     style: TextStyle(color: Colors.grey, fontSize: 16)),
-                Text("Hi James",
-                    style: TextStyle(
+                Obx(() => Text(
+                      "Hi ${profileController.name.value}",
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
-                        color: Colors.black)),
+                        color: Colors.black,
+                      ),
+                    )),
               ],
             ),
             const Spacer(),
-            CircleAvatar(
-              backgroundColor: Colors.blue.shade100,
-              child: const Icon(Icons.emoji_emotions, color: Colors.blue),
-            ),
+            Obx(() => CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Colors.grey.shade200,
+                  backgroundImage:
+                      (profileController.profilePic.value.isNotEmpty &&
+                              Uri.tryParse(profileController.profileImageUrl)
+                                      ?.hasAbsolutePath ==
+                                  true)
+                          ? NetworkImage(
+                              // '${ApiConstants.baseUrlEmulator}/${profileController.profileImageUrl}',
+                              '${ApiConstants.baseUrlEmulator}/images/profile-pics/${profileController.profilePic.value}',
+                            )
+                          : null,
+                ))
           ],
         ),
       ),
@@ -52,11 +71,19 @@ class HomeView extends GetView<HomeController> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                infoCard("Total Scans", "64", LucideIcons.scanLine),
+                Obx(() => infoCard(
+                      "Total Scans",
+                      riwayatController.totalScans.value.toString(),
+                      LucideIcons.scanLine,
+                    )),
                 SizedBox(
                   width: 10,
                 ),
-                infoCard("Total Doctor", "32", LucideIcons.stethoscope),
+                Obx(() => infoCard(
+                      "Total Dokter",
+                      homeController.totalDokter.value.toString(),
+                      LucideIcons.scanLine,
+                    )),
               ],
             ),
             const SizedBox(height: 28),
@@ -101,11 +128,31 @@ class HomeView extends GetView<HomeController> {
               ],
             ),
             const SizedBox(height: 21),
-            scanHistoryCard("Dr Alan", "17-02-2025", "Cataracts"),
+            Obx(() {
+              final exams = riwayatController.filteredExaminations;
+              if (exams.isEmpty) {
+                return const Center(child: Text("Belum ada riwayat."));
+              }
+
+              return Column(
+                children: exams
+                    .map((examination) => Column(
+                          children: [
+                            scanHistoryCard(
+                              examination.doctorName ?? 'Unknown',
+                              riwayatController
+                                  .formatDate(examination.examinationDate),
+                              examination.diagnosis,
+                            ),
+                            const SizedBox(height: 13),
+                          ],
+                        ))
+                    .toList(),
+              );
+            }),
             SizedBox(
               height: 13,
             ),
-            scanHistoryCard("Dr Alan", "17-02-2025", "Cataracts"),
           ],
         ),
       ),

@@ -11,6 +11,7 @@ abstract class Routes {
   static const PROFILE = _Paths.PROFILE;
   static const RIWAYAT = _Paths.RIWAYAT;
   static const EYESCANNER = _Paths.EYESCANNER;
+  static const EYESCANRESULT = _Paths.EYESCANRESULT;
 }
 
 abstract class _Paths {
@@ -23,4 +24,5 @@ abstract class _Paths {
   static const PROFILE = '/profile';
   static const RIWAYAT = '/riwayat';
   static const EYESCANNER = '/eyescanner';
+  static const EYESCANRESULT = '/eyescanresult';
 }
