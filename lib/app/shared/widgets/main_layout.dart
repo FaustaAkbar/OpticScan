@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:opticscan/app/modules/home/views/home_view.dart';
-import 'package:opticscan/app/modules/profile/views/profile_view.dart';
-import 'package:opticscan/app/modules/riwayat/views/riwayat_view.dart';
-import 'package:opticscan/app/routes/app_pages.dart';
-import 'package:opticscan/app/shared/widgets/persistent_bottom_nav_bar.dart';
+import 'package:IntelliSight/app/modules/home/views/home_view.dart';
+import 'package:IntelliSight/app/modules/profile/views/profile_view.dart';
+import 'package:IntelliSight/app/modules/riwayat/views/riwayat_view.dart';
+import 'package:IntelliSight/app/routes/app_pages.dart';
+import 'package:IntelliSight/app/shared/widgets/persistent_bottom_nav_bar.dart';
 
 class MainLayout extends StatelessWidget {
   final String currentRoute;

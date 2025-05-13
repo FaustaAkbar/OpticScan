@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:opticscan/form_submit/eye_scan_result_service.dart';
-import 'package:opticscan/services/user_service.dart';
+import 'package:IntelliSight/form_submit/eye_scan_result_service.dart';
+import 'package:IntelliSight/services/user_service.dart';
 
 class EyeScanResultController extends GetxController {
   final nameController = TextEditingController(); // Tambahkan ini

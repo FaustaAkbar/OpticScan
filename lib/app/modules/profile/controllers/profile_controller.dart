@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:opticscan/app/routes/app_pages.dart';
-import 'package:opticscan/services/user_service.dart';
-import 'package:opticscan/utils/constants/color.dart';
-import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
+import 'package:IntelliSight/app/routes/app_pages.dart';
+import 'package:IntelliSight/services/user_service.dart';
+import 'package:IntelliSight/utils/constants/color.dart';
+import 'package:IntelliSight/utils/widgets/stylish_progress_indicator.dart';
 
 class ProfileController extends GetxController {
   // User service
@@ -105,17 +105,6 @@ class ProfileController extends GetxController {
         confirmPasswordError.value = '';
       }
     });
-  }
-
-  @override
-  void onClose() {
-    nameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    oldPasswordController.dispose();
-    newPasswordController.dispose();
-    confirmPasswordController.dispose();
-    super.onClose();
   }
 
   // ========= load data profile dari backend =========

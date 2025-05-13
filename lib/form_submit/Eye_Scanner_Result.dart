@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:opticscan/form_submit/eye_scanner_result_controller.dart';
+import 'package:IntelliSight/form_submit/eye_scanner_result_controller.dart';
 
 class EyeScanResultScreen extends StatelessWidget {
   final String imagePath;
@@ -10,10 +10,10 @@ class EyeScanResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final EyeScanResultController _controller =
+    final EyeScanResultController controller =
         Get.put(EyeScanResultController());
 
-    _controller.imageFile.value = File(imagePath);
+    controller.imageFile.value = File(imagePath);
 
     return Scaffold(
       backgroundColor: const Color(0XFFE2E9F1),
@@ -82,7 +82,7 @@ class EyeScanResultScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: TextField(
-                  controller: _controller.nameController,
+                  controller: controller.nameController,
                   decoration: const InputDecoration(
                     hintText: "Nama Anda",
                     hintStyle: TextStyle(
@@ -109,7 +109,7 @@ class EyeScanResultScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: TextField(
-                  controller: _controller.complaintController,
+                  controller: controller.complaintController,
                   maxLines: 5,
                   decoration: const InputDecoration(
                     hintText: "Masukkan keluhan Anda",
@@ -129,7 +129,7 @@ class EyeScanResultScreen extends StatelessWidget {
             const SizedBox(height: 30),
 
             /// Tombol Submit
-            Container(
+            SizedBox(
               height: 30,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 130),
@@ -141,9 +141,9 @@ class EyeScanResultScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () async {
-                    await _controller.submitScan();
+                    await controller.submitScan();
                   },
-                  child: _controller.isLoading.value
+                  child: controller.isLoading.value
                       ? const CircularProgressIndicator(
                           color: Colors.white,
                         )

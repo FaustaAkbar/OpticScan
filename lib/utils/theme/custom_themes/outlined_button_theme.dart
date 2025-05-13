@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:opticscan/utils/constants/color.dart';
+import 'package:IntelliSight/utils/constants/color.dart';
 
 class OoutlinedButtonTheme {
   OoutlinedButtonTheme._();

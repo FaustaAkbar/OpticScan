@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:opticscan/app/routes/app_pages.dart';
-import 'package:opticscan/utils/animations/animation.dart';
-import 'package:opticscan/services/user_service.dart';
+import 'package:IntelliSight/app/routes/app_pages.dart';
+import 'package:IntelliSight/utils/animations/animation.dart';
+import 'package:IntelliSight/services/user_service.dart';
 
 class SplashscreenController extends GetxController
     with GetTickerProviderStateMixin {
@@ -53,12 +53,13 @@ class SplashscreenController extends GetxController
     try {
       // ambil service User
       _userService = Get.find<UserService>();
-      await _userService.checkAuthStatus();
+      // cek apakah user sudah login
+      final isAuthenticated = await _userService.checkAuthStatus();
+
       await Future.delayed(const Duration(milliseconds: 1000));
       textController.forward().then((_) {
         // navigasi ke HOME jika sudah login, jika tidak maka ke LOGIN
-        String route =
-            _userService.isLoggedIn.value ? Routes.HOME : Routes.LOGIN;
+        String route = isAuthenticated ? Routes.HOME : Routes.LOGIN;
         Get.offNamed(
           route,
           arguments: {

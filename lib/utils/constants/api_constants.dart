@@ -15,7 +15,7 @@ class ApiConstants {
   // Examination endpoints
   static const String getExamResultsEndpoint = '/exam/my-result'; // GET
   static const String submitExamEndpoint =
-      baseUrlEmulator + '/exam/submit-exam'; // POST (dengan file upload)
+      '$baseUrlEmulator/exam/submit-exam'; // POST (dengan file upload)
   static const String diagnosisDokterEndpoint =
       '/exam/diagnosis-dokter'; // POST
 
@@ -36,6 +36,7 @@ class ApiConstants {
 
   // Simpan keys
   static const String accessTokenKey = 'access_token';
+  static const String refreshTokenKey = 'refresh_token';
   static const String userRoleKey = 'user_role';
   static const String userIdKey = 'user_id';
 }

@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
-import 'package:opticscan/services/api_service.dart';
+import 'package:IntelliSight/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:dio/dio.dart';
-import 'package:opticscan/utils/constants/api_constants.dart';
+import 'package:IntelliSight/utils/constants/api_constants.dart';
 import 'dart:io';
+import 'package:dio/dio.dart';
 
 class UserService extends GetxService {
   final ApiService _apiService = ApiService();
@@ -105,26 +105,21 @@ class UserService extends GetxService {
   // ========= refresh token =========
   Future<bool> _refreshToken() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final dio = Dio();
-      dio.options.baseUrl = _apiService.baseUrl;
-      final response = await dio.get(ApiConstants.refreshEndpoint);
-      if (response.statusCode == 200 && response.data['accessToken'] != null) {
-        // simpan token baru
-        await prefs.setString(
-            ApiConstants.accessTokenKey, response.data['accessToken']);
-        return true;
-      } else {
-        // hapus token jika refresh gagal
+      final refreshSuccess = await _apiService.refreshToken();
+
+      if (!refreshSuccess) {
+        final prefs = await SharedPreferences.getInstance();
         await prefs.remove(ApiConstants.accessTokenKey);
         await prefs.remove(ApiConstants.userRoleKey);
-        return false;
+        _resetAuthState();
       }
+
+      return refreshSuccess;
     } catch (e) {
-      // hapus token jika error
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(ApiConstants.accessTokenKey);
       await prefs.remove(ApiConstants.userRoleKey);
+      _resetAuthState();
       return false;
     }
   }
@@ -136,9 +131,8 @@ class UserService extends GetxService {
       if (response.success && response.data != null) {
         userData.value = response.data;
       }
-      // Silently handle unsuccessful responses
     } catch (e) {
-      // Silently handle exceptions
+      // handle exception
     }
   }
 

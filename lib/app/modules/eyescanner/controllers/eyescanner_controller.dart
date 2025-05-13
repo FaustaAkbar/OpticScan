@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:opticscan/form_submit/Eye_Scanner_Result.dart';
+import 'package:IntelliSight/form_submit/Eye_Scanner_Result.dart';
 
 class EyescannerController extends GetxController {
   final isCameraInitialized = false.obs;

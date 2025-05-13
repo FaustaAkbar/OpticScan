@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:opticscan/app/routes/app_pages.dart';
-import 'package:opticscan/services/examination_service.dart';
-import 'package:opticscan/utils/constants/api_constants.dart';
+import 'package:IntelliSight/app/routes/app_pages.dart';
+import 'package:IntelliSight/services/examination_service.dart';
+import 'package:IntelliSight/utils/constants/api_constants.dart';
 
 class ExaminationRecord {
   final int examinationId;
@@ -42,7 +42,7 @@ class ExaminationRecord {
       complaints: json['complaints'],
       diagnosis: json['diagnosis'],
       doctorsNote: json['doctors_note'],
-      status: json['status'] == 'ongoing' ? 'On Review' : 'Completed',
+      status: json['status'] == 'ongoing' ? 'On going' : 'Completed',
       patientName: json['patient']?['name'] ?? 'Unknown',
       doctorName: json['doctor']?['name'],
     );
@@ -101,7 +101,7 @@ class RiwayatController extends GetxController {
   // ========= mengambil data pemeriksaan berdasarkan tab yang dipilih =========
   List<ExaminationRecord> get filteredExaminations {
     return selectedTab.value == 0
-        ? allExaminations.where((exam) => exam.status == 'On Review').toList()
+        ? allExaminations.where((exam) => exam.status == 'On going').toList()
         : allExaminations.where((exam) => exam.status == 'Completed').toList();
   }
 

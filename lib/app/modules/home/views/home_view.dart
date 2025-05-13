@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:opticscan/app/modules/riwayat/controllers/riwayat_controller.dart';
-import 'package:opticscan/app/routes/app_pages.dart';
-import 'package:opticscan/app/shared/bindings/main_binding.dart';
-import 'package:opticscan/app/shared/widgets/main_layout.dart';
-import 'package:opticscan/app/modules/profile/controllers/profile_controller.dart';
-import 'package:opticscan/utils/constants/api_constants.dart';
+import 'package:IntelliSight/app/modules/riwayat/controllers/riwayat_controller.dart';
+import 'package:IntelliSight/app/routes/app_pages.dart';
+import 'package:IntelliSight/app/shared/bindings/main_binding.dart';
+import 'package:IntelliSight/app/shared/widgets/main_layout.dart';
+import 'package:IntelliSight/app/modules/profile/controllers/profile_controller.dart';
+import 'package:IntelliSight/utils/constants/api_constants.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {

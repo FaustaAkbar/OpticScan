@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:opticscan/utils/constants/api_constants.dart';
+import 'package:IntelliSight/utils/constants/api_constants.dart';
 import 'dart:io';
 import 'package:http_parser/http_parser.dart';
+import 'package:get/get.dart' as getx;
 
 class ApiResponse {
   final bool success;
@@ -44,9 +45,20 @@ class ApiService {
             return handler.next(error);
           }
           if (error.response?.statusCode == 401) {
-            bool refreshed = await _refreshToken();
+            bool refreshed = await refreshToken();
             if (refreshed) {
               return handler.resolve(await _retry(error.requestOptions));
+            } else {
+              // hapus token jika refresh gagal
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.remove(ApiConstants.accessTokenKey);
+              await prefs.remove(ApiConstants.userRoleKey);
+              await prefs.remove(ApiConstants.refreshTokenKey);
+
+              // redirect ke login jika refresh gagal
+              if (getx.Get.currentRoute != '/login') {
+                getx.Get.offAllNamed('/login');
+              }
             }
           }
           return handler.next(error);
@@ -113,18 +125,26 @@ class ApiService {
         await prefs.setString(
             ApiConstants.accessTokenKey, response.data['accessToken']);
         await prefs.setString(ApiConstants.userRoleKey, response.data['role']);
+
+        // ambil refresh token dari cookies
         if (response.headers['set-cookie'] != null) {
           final cookies = response.headers['set-cookie'];
-          final jwtCookie = cookies?.firstWhere(
-            (cookie) => cookie.startsWith('jwt='),
-            orElse: () => '',
-          );
-          if (jwtCookie != null && jwtCookie.isNotEmpty) {
-            final refreshToken = jwtCookie.split(';')[0].substring(4);
-            //simpan refresh token ke storage
-            await prefs.setString('refresh_token', refreshToken);
+          String? refreshToken;
+
+          // cari refresh token di cookies
+          for (String? cookie in cookies ?? []) {
+            if (cookie != null && cookie.startsWith('jwt=')) {
+              refreshToken = cookie.split(';')[0].substring(4);
+              break;
+            }
+          }
+
+          if (refreshToken != null && refreshToken.isNotEmpty) {
+            // simpan refresh token ke storage
+            await prefs.setString(ApiConstants.refreshTokenKey, refreshToken);
           }
         }
+
         return ApiResponse(
           success: true,
           message: response.data['message'] ?? 'Login successful',
@@ -198,20 +218,63 @@ class ApiService {
   }
 
   // ========= refresh token =========
-  Future<bool> _refreshToken() async {
+  Future<bool> refreshToken() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      // panggil endpoint refresh token
-      final response = await _dio.get(ApiConstants.refreshEndpoint);
+      final refreshToken = prefs.getString(ApiConstants.refreshTokenKey);
+
+      if (refreshToken == null) {
+        return false;
+      }
+
+      final dio = Dio();
+      dio.options.baseUrl = _baseUrl;
+
+      // set up options dengan refresh token di cookie
+      final options = Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Cookie': 'jwt=$refreshToken', // kirim refresh token di cookie
+        },
+        extra: {
+          'withCredentials': true,
+        },
+      );
+
+      final response = await dio.get(
+        ApiConstants.refreshEndpoint,
+        options: options,
+      );
+
       if (response.statusCode == 200 && response.data['accessToken'] != null) {
         // simpan token baru
         await prefs.setString(
             ApiConstants.accessTokenKey, response.data['accessToken']);
+
+        // cek apakah ada refresh token baru di cookies
+        if (response.headers['set-cookie'] != null) {
+          final cookies = response.headers['set-cookie'];
+          String? newRefreshToken;
+
+          // cari refresh token di cookies
+          for (String? cookie in cookies ?? []) {
+            if (cookie != null && cookie.startsWith('jwt=')) {
+              newRefreshToken = cookie.split(';')[0].substring(4);
+              break;
+            }
+          }
+
+          if (newRefreshToken != null && newRefreshToken.isNotEmpty) {
+            // simpan refresh token baru
+            await prefs.setString(
+                ApiConstants.refreshTokenKey, newRefreshToken);
+          }
+        }
+
         return true;
       } else {
-        // hapus token jika refresh gagal
-        await prefs.remove(ApiConstants.accessTokenKey);
-        await prefs.remove(ApiConstants.userRoleKey);
+        // refresh token gagal
         return false;
       }
     } catch (e) {
@@ -226,7 +289,7 @@ class ApiService {
       dio.options.baseUrl = _baseUrl;
       // ambil refresh token dari storage
       final prefs = await SharedPreferences.getInstance();
-      final refreshToken = prefs.getString('refresh_token');
+      final refreshToken = prefs.getString(ApiConstants.refreshTokenKey);
       final options = Options(
         headers: {
           'Content-Type': 'application/json',
@@ -248,7 +311,7 @@ class ApiService {
       await prefs.remove(ApiConstants.accessTokenKey);
       await prefs.remove(ApiConstants.userRoleKey);
       await prefs.remove(ApiConstants.userIdKey);
-      await prefs.remove('refresh_token');
+      await prefs.remove(ApiConstants.refreshTokenKey);
       return ApiResponse(
         success: true,
         message: response.data['message'] ?? 'Logged out successfully',
@@ -259,7 +322,7 @@ class ApiService {
       await prefs.remove(ApiConstants.accessTokenKey);
       await prefs.remove(ApiConstants.userRoleKey);
       await prefs.remove(ApiConstants.userIdKey);
-      await prefs.remove('refresh_token');
+      await prefs.remove(ApiConstants.refreshTokenKey);
       return ApiResponse(
         success: false,
         message: 'Error during logout, but tokens cleared',

@@ -1,7 +1,8 @@
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:opticscan/utils/constants/color.dart';
-import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
+import 'package:IntelliSight/utils/constants/color.dart';
+import 'package:IntelliSight/utils/widgets/stylish_progress_indicator.dart';
 import '../controllers/riwayat_controller.dart';
 
 class AppStyles {
@@ -180,7 +181,7 @@ class RiwayatView extends GetView<RiwayatController> {
       child: Obx(() => Row(
             children: [
               _buildTabItem(0, 'On Progress'),
-              _buildTabItem(1, 'Selesai'),
+              _buildTabItem(1, 'Completed'),
             ],
           )),
     );
@@ -294,37 +295,51 @@ class RiwayatView extends GetView<RiwayatController> {
     return Container(
       padding: AppStyles.smallPadding,
       decoration: BoxDecoration(
-        color: AppStyles.backgroundBlue,
-        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppStyles.primaryBlue, width: 1),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Icon(
-            Icons.calendar_today_outlined,
-            color: AppStyles.primaryBlue,
-            size: 20,
+          Container(
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.calendar_month_outlined,
+                  color: AppStyles.primaryBlue,
+                  size: 24,
+                ),
+                SizedBox(width: 5),
+                Text(
+                  controller.getDayOfWeek(examination.examinationDate),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppStyles.primaryBlue,
+                  ),
+                ),
+              ],
+            ),
           ),
-          SizedBox(width: AppStyles.smallSpacing),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                controller.getDayOfWeek(examination.examinationDate),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: AppStyles.textMedium,
+          Container(
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.access_time_outlined,
+                  color: AppStyles.primaryBlue,
+                  size: 24,
                 ),
-              ),
-              Text(
-                controller.formatDate(examination.examinationDate),
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppStyles.textDark,
+                SizedBox(width: 5),
+                Text(
+                  controller.formatDate(examination.examinationDate),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppStyles.primaryBlue,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -334,280 +349,320 @@ class RiwayatView extends GetView<RiwayatController> {
   // ========= popup detail pemeriksaan =========
   void _showExaminationDetailsPopup(
       BuildContext context, ExaminationRecord examination) {
-    final isCompleted = examination.status == "Completed";
-
-    showModalBottomSheet(
+    final isCompleted = examination.status == 'Completed';
+    showDialog(
       context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ),
+      builder: (context) => Dialog(
+        backgroundColor: Color(0xFFFFFFFF),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Examination Details',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          width: double.infinity,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Eye image
+              Center(
+                child: Column(
+                  children: [
+                    isCompleted
+                        ? Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Color(0xFF23A26D), // background abu-abu
+                              shape: BoxShape.circle, // bentuk lingkaran
+                            ),
+                            child: Icon(
+                              Icons.check,
+                              size: 34,
+                              color: Colors.white, // warna ikon putih
+                            ),
+                          )
+                        : Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(
+                                  255, 216, 216, 216), // background abu-abu
+                              shape: BoxShape.circle, // bentuk lingkaran
+                            ),
+                            child: Icon(
+                              Icons.timelapse_outlined,
+                              size: 34,
+                              color: Colors.white, // warna ikon putih
+                            ),
+                          ),
+                    SizedBox(height: 16),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: Image.network(
+                        examination.eyeImageUrl,
+                        height: 171,
+                        width: 222,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          height: 200,
+                          width: 200,
+                          color: Colors.grey.shade200,
+                          child: const Center(
+                            child: Icon(
+                              Icons.broken_image,
+                              size: 50,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            height: 200,
+                            width: 200,
+                            color: Colors.grey.shade200,
+                            child: const Center(
+                              child: StylishProgressIndicator(
+                                size: 50,
+                                color: Colors.blue,
+                                hasGlow: true,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
+              ),
+              const SizedBox(height: 24),
+              Divider(
+                height: 1,
+                thickness: 1,
+                color: Colors.grey.shade200,
+              ),
+              const SizedBox(height: 24),
+              // Information rows
 
-            // Nama pasien dan status
-            Row(
-              children: [
-                _buildAvatarWithSmile(size: 50),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        examination.patientName,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                      isCompleted
+                          ? Text(
+                              'Diagnosis by Doctor',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFF707070),
+                              ),
+                            )
+                          : Text(
+                              'Early Diagnosis by AI',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFF707070),
+                              ),
+                            ),
+                      isCompleted
+                          ? Expanded(
+                              child: Text(
+                                examination.diagnosis,
+                                textAlign: TextAlign.right,
+                                softWrap: true,
+                                overflow: TextOverflow.visible,
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: primaryColor,
+                                ),
+                              ),
+                            )
+                          : Expanded(
+                              child: Text(
+                                examination.diagnosis,
+                                textAlign: TextAlign.right,
+                                softWrap: true,
+                                overflow: TextOverflow.visible,
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF45B3CB),
+                                ),
+                              ),
+                            ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Tanggal Registrasi',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF707070),
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: isCompleted
-                              ? AppStyles.completedGreen.withOpacity(0.1)
-                              : AppStyles.pendingYellow.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Text(
-                          examination.status,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: isCompleted
-                                ? AppStyles.completedGreen
-                                : AppStyles.pendingYellow,
-                          ),
+                      Text(
+                        controller.formatDate(examination.examinationDate),
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF121212),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Divider
-            Container(
-              height: 1,
-              color: Colors.grey.shade200,
-            ),
-            const SizedBox(height: 16),
-
-            // Tanggal
-            Row(
-              children: [
-                const Icon(
-                  Icons.calendar_today_outlined,
-                  color: AppStyles.primaryBlue,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${controller.getDayOfWeek(examination.examinationDate)}, ${controller.formatDate(examination.examinationDate)}',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Gambar pemeriksaan mata
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                examination.eyeImageUrl,
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  height: 200,
-                  width: double.infinity,
-                  color: Colors.grey.shade200,
-                  child: const Center(
-                    child: Icon(
-                      Icons.broken_image,
-                      size: 50,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    height: 200,
-                    width: double.infinity,
-                    color: Colors.grey.shade200,
-                    child: const Center(
-                      child: StylishProgressIndicator(
-                        size: 40,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // AI Diagnosis
-            const Text(
-              'AI Diagnosis',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.grey.shade200,
-                  width: 1,
-                ),
-              ),
-              child: Text(
-                examination.diagnosis,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: AppStyles.textDark,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Keluhan (jika ada)
-            if (examination.complaints != null &&
-                examination.complaints!.isNotEmpty) ...[
-              const Text(
-                'Patient Complaints',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.grey.shade200,
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  examination.complaints!,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppStyles.textDark,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
-
-            // Diagnosa dokter dan catatan (jika status selesai)
-            if (examination.status == "Completed") ...[
-              const Text(
-                'Doctor\'s Diagnosis',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.grey.shade200,
-                    width: 1,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.person,
-                          size: 16,
-                          color: AppStyles.primaryBlue,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          examination.doctorName ?? 'Unknown Doctor',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: AppStyles.primaryBlue,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    if (examination.doctorsNote != null &&
-                        examination.doctorsNote!.isNotEmpty)
-                      Text(
-                        examination.doctorsNote!,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppStyles.textDark,
-                        ),
-                      )
-                    else
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
                       const Text(
-                        'No additional notes from doctor',
+                        'Status',
                         style: TextStyle(
-                          fontSize: 14,
-                          fontStyle: FontStyle.italic,
-                          color: AppStyles.textLight,
+                          fontFamily: 'Poppins',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF707070),
                         ),
                       ),
-                  ],
-                ),
+                      Text(
+                        examination.status,
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF121212),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+              DottedLine(
+                direction: Axis.horizontal,
+                lineLength: double.infinity,
+                lineThickness: 1.0,
+                dashLength: 6.0,
+                dashColor: Color(0XFFEDEDED),
               ),
               const SizedBox(height: 16),
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Nama Dokter',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF707070),
+                        ),
+                      ),
+                      Text(
+                        examination.doctorName ?? "-----",
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF121212),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  isCompleted
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              const Text(
+                                'Catatan dokter',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFFA5A5A5),
+                                ),
+                              ),
+                              Text(
+                                examination.doctorsNote!,
+                                textAlign: TextAlign.center,
+                                softWrap: true,
+                                overflow: TextOverflow.visible,
+                                style: const TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF121212),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Catatan dokter',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFF707070),
+                              ),
+                            ),
+                            Text(
+                              "-----",
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF121212),
+                              ),
+                            ),
+                          ],
+                        )
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              // Kembali button
+              Center(
+                child: SizedBox(
+                  width: 109,
+                  height: 30,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('Kembali'),
+                  ),
+                ),
+              ),
             ],
-          ],
+          ),
         ),
       ),
     );
@@ -619,10 +674,6 @@ class RiwayatView extends GetView<RiwayatController> {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(
-          color: Colors.orange,
-          width: 3,
-        ),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(size / 2),

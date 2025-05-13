@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
-import 'package:opticscan/app/routes/app_pages.dart';
-import 'package:opticscan/services/api_service.dart';
+import 'package:IntelliSight/app/routes/app_pages.dart';
+import 'package:IntelliSight/services/api_service.dart';
 
 class HomeController extends GetxController {
   final count = 0.obs;

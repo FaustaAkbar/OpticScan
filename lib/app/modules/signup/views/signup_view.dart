@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:opticscan/utils/animations/animation.dart';
-import 'package:opticscan/utils/constants/color.dart';
-import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
+import 'package:IntelliSight/utils/animations/animation.dart';
+import 'package:IntelliSight/utils/constants/color.dart';
+import 'package:IntelliSight/utils/widgets/stylish_progress_indicator.dart';
 
 import '../controllers/signup_controller.dart';
 
@@ -58,7 +58,7 @@ class SignupView extends GetView<SignupController> {
                             ),
                             children: [
                               TextSpan(
-                                text: 'OpticScan',
+                                text: 'IntelliSight',
                                 style: TextStyle(
                                   color: primaryColor,
                                   fontWeight: FontWeight.w700,

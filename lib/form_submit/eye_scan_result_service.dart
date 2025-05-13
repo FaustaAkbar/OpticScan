@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:opticscan/services/api_service.dart';
-import 'package:opticscan/utils/constants/api_constants.dart';
+import 'package:IntelliSight/services/api_service.dart';
+import 'package:IntelliSight/utils/constants/api_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 import 'package:http_parser/http_parser.dart';

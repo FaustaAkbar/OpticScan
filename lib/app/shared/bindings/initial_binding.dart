@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
-import 'package:opticscan/services/api_service.dart';
-import 'package:opticscan/services/examination_service.dart';
-import 'package:opticscan/services/user_service.dart';
+import 'package:IntelliSight/services/api_service.dart';
+import 'package:IntelliSight/services/examination_service.dart';
+import 'package:IntelliSight/services/user_service.dart';
 
 /// ========= binding awal =========
 class InitialBinding extends Bindings {

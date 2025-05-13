@@ -1,9 +1,8 @@
+import 'package:IntelliSight/utils/constants/color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'package:opticscan/utils/constants/api_constants.dart';
-import 'package:opticscan/utils/constants/color.dart';
-import 'package:opticscan/utils/widgets/stylish_progress_indicator.dart';
+import 'package:IntelliSight/utils/widgets/stylish_progress_indicator.dart';
+import 'package:IntelliSight/utils/constants/api_constants.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {

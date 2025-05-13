@@ -2,10 +2,10 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:opticscan/app/routes/app_pages.dart';
-import 'package:opticscan/app/shared/bindings/main_binding.dart';
-import 'package:opticscan/app/shared/widgets/main_layout.dart';
-import 'package:opticscan/form_submit/Eye_Scanner_Result.dart';
+import 'package:IntelliSight/app/routes/app_pages.dart';
+import 'package:IntelliSight/app/shared/bindings/main_binding.dart';
+import 'package:IntelliSight/app/shared/widgets/main_layout.dart';
+import 'package:IntelliSight/form_submit/Eye_Scanner_Result.dart';
 
 import '../controllers/eyescanner_controller.dart';
 
