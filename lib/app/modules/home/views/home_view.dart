@@ -82,7 +82,7 @@ class HomeView extends GetView<HomeController> {
                 Obx(() => infoCard(
                       "Total Dokter",
                       homeController.totalDokter.value.toString(),
-                      LucideIcons.scanLine,
+                      Icons.medical_services,
                     )),
               ],
             ),
