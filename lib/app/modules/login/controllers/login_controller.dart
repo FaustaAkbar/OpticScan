@@ -106,10 +106,6 @@ class LoginController extends GetxController
         passwordController.text,
       );
       if (response.success) {
-        print('Login response data: ${response.data}');
-        final token = response.data['accessToken'];
-        print('Token: $token');
-
         _showSuccessMessage(response.message);
         Get.offNamed(Routes.HOME);
       } else {
