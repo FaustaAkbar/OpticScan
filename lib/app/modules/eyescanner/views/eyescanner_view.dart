@@ -43,17 +43,21 @@ class EyescannerView extends GetView<EyescannerController> {
             }
           }),
 
-          // Switch Camera Icon (Top Right)
           Positioned(
             top: 40,
             right: 20,
             child: IconButton(
               icon: const Icon(Icons.cached, color: Colors.white, size: 32),
-              onPressed: controller.switchCamera,
+              onPressed: () async {
+                if (controller.isCameraInitialized.value) {
+                  controller.isCameraInitialized.value =
+                      false; // Matikan preview sementara
+                  await controller.switchCamera();
+                }
+              },
             ),
           ),
 
-          // Camera Guide Box and Title
           Positioned.fill(
             child: Column(
               children: [
@@ -76,8 +80,6 @@ class EyescannerView extends GetView<EyescannerController> {
               ],
             ),
           ),
-
-          // Tombol kamera di tengah bawah
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -104,12 +106,10 @@ class EyescannerView extends GetView<EyescannerController> {
               ),
             ),
           ),
-
-          // Tombol galeri di kiri bawah
           Align(
             alignment: Alignment.bottomLeft,
             child: Padding(
-              padding: const EdgeInsets.only(left: 40, bottom: 30),
+              padding: const EdgeInsets.only(left: 60, bottom: 36),
               child: GestureDetector(
                 onTap: controller.pickImageFromGallery,
                 child: const CircleAvatar(

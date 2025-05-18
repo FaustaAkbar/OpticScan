@@ -41,19 +41,34 @@ class EyescannerController extends GetxController {
 
   Future<void> switchCamera() async {
     if (cameras.length > 1) {
+      // Ganti index kamera
       selectedCameraIndex.value =
           (selectedCameraIndex.value + 1) % cameras.length;
 
+      // Dispose controller lama
       if (cameraController.value != null) {
         await cameraController.value!.dispose();
       }
 
-      cameraController.value = CameraController(
+      // Buat controller baru
+      final newController = CameraController(
         cameras[selectedCameraIndex.value],
         ResolutionPreset.high,
       );
 
-      await cameraController.value!.initialize();
+      try {
+        // Inisialisasi dulu
+        await newController.initialize();
+
+        // Setelah berhasil, baru assign ke cameraController
+        cameraController.value = newController;
+
+        // Update indikator
+        isCameraInitialized.value = true;
+      } catch (e) {
+        print("Error switching camera: $e");
+        isCameraInitialized.value = false;
+      }
     }
   }
 
