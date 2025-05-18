@@ -19,7 +19,7 @@ class EyeScanResultController extends GetxController {
     final image = imageFile.value;
 
     if (name.isEmpty || complaint.isEmpty || image == null) {
-      Get.snackbar('Error', 'Lengkapi semua data!',
+      Get.snackbar('Error', 'Complete all data!',
           backgroundColor: Colors.red, colorText: Colors.white);
       return;
     }
@@ -96,7 +96,7 @@ class EyeScanResultController extends GetxController {
 
               // judul sukses
               const Text(
-                'Data Berhasil Dikirim',
+                'Data Sent Successfully',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
@@ -107,7 +107,7 @@ class EyeScanResultController extends GetxController {
 
               // pesan sukses
               const Text(
-                'Mohon menunggu hasil ya',
+                'Please wait for the results',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
@@ -140,7 +140,7 @@ class EyeScanResultController extends GetxController {
                       ),
                     ),
                     child: const Text(
-                      'Kembali',
+                      'Ok',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 16,

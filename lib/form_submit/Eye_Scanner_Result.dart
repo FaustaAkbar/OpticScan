@@ -62,7 +62,7 @@ class EyeScanResultScreen extends StatelessWidget {
                           color: Colors.white,
                         ),
                         label: const Text(
-                          'Ambil Ulang',
+                          'Retake photos',
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -84,7 +84,7 @@ class EyeScanResultScreen extends StatelessWidget {
                 child: TextField(
                   controller: controller.nameController,
                   decoration: const InputDecoration(
-                    hintText: "Nama Anda",
+                    hintText: "Your Name",
                     hintStyle: TextStyle(
                       color: Colors.black,
                       fontSize: 16,
@@ -112,7 +112,7 @@ class EyeScanResultScreen extends StatelessWidget {
                   controller: controller.complaintController,
                   maxLines: 5,
                   decoration: const InputDecoration(
-                    hintText: "Masukkan keluhan Anda",
+                    hintText: "Enter your concern",
                     hintStyle: TextStyle(
                       color: Colors.black,
                       fontSize: 16,
@@ -156,7 +156,7 @@ class EyeScanResultScreen extends StatelessWidget {
                             ),
                             SizedBox(width: 8),
                             Text(
-                              'Kirim',
+                              'Send',
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.white,

@@ -652,7 +652,6 @@ class ApiService {
                 response.data['message'] ?? 'Failed to get examination result');
       }
     } catch (e) {
-      print('object data repo 2 :');
       throw Exception('Failed to fetch user counts: ${e.toString()}');
     }
   }

@@ -131,7 +131,7 @@ class HomeView extends GetView<HomeController> {
             Obx(() {
               final exams = riwayatController.filteredExaminations;
               if (exams.isEmpty) {
-                return const Center(child: Text("Belum ada riwayat."));
+                return const Center(child: Text("No history yet."));
               }
 
               return Column(

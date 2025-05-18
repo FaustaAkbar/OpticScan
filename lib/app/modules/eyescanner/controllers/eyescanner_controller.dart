@@ -35,7 +35,7 @@ class EyescannerController extends GetxController {
         isCameraInitialized.value = true;
       }
     } catch (e) {
-      print("Error initializing camera: $e");
+      // Handle the error
     }
   }
 
@@ -62,10 +62,8 @@ class EyescannerController extends GetxController {
         cameraController.value!.value.isInitialized) {
       try {
         final XFile file = await cameraController.value!.takePicture();
-        print("Foto disimpan di: ${file.path}");
         return file.path;
       } catch (e) {
-        print("Error taking picture: $e");
         return null;
       }
     }
@@ -77,11 +75,10 @@ class EyescannerController extends GetxController {
       final XFile? image =
           await ImagePicker().pickImage(source: ImageSource.gallery);
       if (image != null) {
-        print("Gambar dari galeri: ${image.path}");
         Get.to(() => EyeScanResultScreen(imagePath: image.path));
       }
     } catch (e) {
-      print("Error picking image: $e");
+      // Handle the error
     }
     return null;
   }

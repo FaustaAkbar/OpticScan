@@ -88,7 +88,7 @@ class EyescannerView extends GetView<EyescannerController> {
                   if (imagePath != null) {
                     Get.to(() => EyeScanResultScreen(imagePath: imagePath));
                   } else {
-                    Get.snackbar('Error', 'Gagal mengambil gambar',
+                    Get.snackbar('Error', 'Failed to take a picture',
                         backgroundColor: Colors.red, colorText: Colors.white);
                   }
                 },
