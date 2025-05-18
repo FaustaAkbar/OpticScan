@@ -44,7 +44,7 @@ class HomeController extends GetxController {
       // totalPasien.value = result['total_pasien'] ?? 0;
       // totalDokter.value = result['total_dokter'] ?? 0;
     } catch (e) {
-      print('Gagal mengambil data user count: $e');
+      //
     }
   }
 }

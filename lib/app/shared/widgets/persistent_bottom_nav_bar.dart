@@ -28,7 +28,7 @@ class PersistentBottomNavBar extends StatelessWidget {
     NavBarItem(
       icon: Icons.article_outlined,
       route: Routes.RIWAYAT,
-      label: 'Riwayat',
+      label: 'History',
     ),
     NavBarItem(
       icon: Icons.person_outline,

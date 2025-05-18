@@ -50,8 +50,7 @@ class EyescannerView extends GetView<EyescannerController> {
               icon: const Icon(Icons.cached, color: Colors.white, size: 32),
               onPressed: () async {
                 if (controller.isCameraInitialized.value) {
-                  controller.isCameraInitialized.value =
-                      false; // Matikan preview sementara
+                  controller.isCameraInitialized.value = false;
                   await controller.switchCamera();
                 }
               },
@@ -90,7 +89,7 @@ class EyescannerView extends GetView<EyescannerController> {
                   if (imagePath != null) {
                     Get.to(() => EyeScanResultScreen(imagePath: imagePath));
                   } else {
-                    Get.snackbar('Error', 'Gagal mengambil gambar',
+                    Get.snackbar('Error', 'Failed to take a picture',
                         backgroundColor: Colors.red, colorText: Colors.white);
                   }
                 },

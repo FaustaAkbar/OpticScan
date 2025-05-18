@@ -54,10 +54,6 @@ class EyeScanResultService {
         ),
       });
 
-      // Print form data for debugging
-      print("Form data fields: ${formData.fields}");
-      print("Form data files: ${formData.files}");
-
       final response = await _dio.post(
         ApiConstants.submitExamEndpoint,
         data: formData,
@@ -74,10 +70,6 @@ class EyeScanResultService {
         ),
       );
 
-      // Print full response for debugging
-      print("Response status: ${response.statusCode}");
-      print("Response data: ${response.data}");
-
       if (response.statusCode != 200 && response.statusCode != 201) {
         return ApiResponse(
           success: false,
@@ -92,15 +84,9 @@ class EyeScanResultService {
         data: response.data['data'],
       );
     } on DioException catch (e) {
-      print('Error: ${e.toString()}');
-      print('Error response: ${e.response?.data}');
-      print('Error request: ${e.requestOptions.uri}');
-      print('Error request data: ${e.requestOptions.data}');
-
       final errorMessage = e.response?.data['message'] ?? 'Gagal mengirim scan';
       return ApiResponse(success: false, message: errorMessage);
     } catch (e) {
-      print('Unexpected error: ${e.toString()}');
       return ApiResponse(success: false, message: 'Terjadi kesalahan');
     }
   }

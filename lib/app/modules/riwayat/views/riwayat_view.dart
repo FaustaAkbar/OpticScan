@@ -78,7 +78,7 @@ class RiwayatView extends GetView<RiwayatController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Riwayat Pemeriksaan', style: AppStyles.headerStyle),
+              Text('Examination History', style: AppStyles.headerStyle),
               SizedBox(height: AppStyles.spacing),
               _buildTabSelector(),
               SizedBox(height: AppStyles.spacing),
@@ -369,18 +369,33 @@ class RiwayatView extends GetView<RiwayatController> {
                 child: Column(
                   children: [
                     isCompleted
-                        ? Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Color(0xFF23A26D), // background abu-abu
-                              shape: BoxShape.circle, // bentuk lingkaran
-                            ),
-                            child: Icon(
-                              Icons.check,
-                              size: 34,
-                              color: Colors.white, // warna ikon putih
-                            ),
+                        ? Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Lingkaran hijau tua di belakang
+                              Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFE4F3ED), // hijau tua
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              // Lingkaran hijau muda di atasnya
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF23A26D), // hijau muda
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.check,
+                                  size: 34,
+                                  color: Colors.white, // ikon putih
+                                ),
+                              ),
+                            ],
                           )
                         : Container(
                             width: 50,
@@ -505,7 +520,7 @@ class RiwayatView extends GetView<RiwayatController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        'Tanggal Registrasi',
+                        'Registration date',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 13,
@@ -566,7 +581,7 @@ class RiwayatView extends GetView<RiwayatController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        'Nama Dokter',
+                        'Doctor name',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 13,
@@ -592,7 +607,7 @@ class RiwayatView extends GetView<RiwayatController> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               const Text(
-                                'Catatan dokter',
+                                'Doctor notes',
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 13,
@@ -619,7 +634,7 @@ class RiwayatView extends GetView<RiwayatController> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
-                              'Catatan dokter',
+                              'Doctor notes',
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 13,
@@ -657,7 +672,7 @@ class RiwayatView extends GetView<RiwayatController> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text('Kembali'),
+                    child: const Text('Ok'),
                   ),
                 ),
               ),

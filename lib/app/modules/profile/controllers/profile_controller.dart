@@ -328,12 +328,13 @@ class ProfileController extends GetxController {
 
       if (image != null) {
         selectedImage.value = File(image.path);
-        await uploadProfilePic();
+        // Tampilkan dialog konfirmasi dengan preview gambar
+        showImageConfirmationDialog();
       }
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Failed to pick image',
+        'Gagal memilih gambar',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -341,12 +342,130 @@ class ProfileController extends GetxController {
     }
   }
 
+  // ========= tampilkan dialog konfirmasi gambar =========
+  void showImageConfirmationDialog() {
+    if (selectedImage.value == null) return;
+
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: backgroundLight,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              const SizedBox(height: 24),
+              const Text(
+                'Confirm',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF333333),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Preview gambar
+              Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: primaryColor, width: 2),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: Image.file(
+                    selectedImage.value!,
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+              const Text(
+                'Are you sure you want to use this photo?',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14),
+              ),
+              const SizedBox(height: 24),
+
+              // Tombol aksi
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    // Tombol batal
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          selectedImage.value = null;
+                          Get.back();
+                        },
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          foregroundColor: Colors.grey.shade700,
+                        ),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+
+                    // Tombol konfirmasi
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Get.back();
+                          uploadProfilePic();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          'Yes, Apply',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: true,
+    );
+  }
+
   // ========= upload profile picture =========
   Future<void> uploadProfilePic() async {
     if (selectedImage.value == null) {
       Get.snackbar(
         'Error',
-        'Please select an image first',
+        'Silakan pilih gambar terlebih dahulu',
         snackPosition: SnackPosition.BOTTOM,
       );
       return;
@@ -360,8 +479,8 @@ class ProfileController extends GetxController {
         profilePic.value = response.data;
         selectedImage.value = null;
         Get.snackbar(
-          'Success',
-          'Profile picture updated successfully',
+          'Successful',
+          'Profile photo updated successfully',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
