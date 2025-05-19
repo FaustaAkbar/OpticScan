@@ -69,21 +69,22 @@ class HomeView extends GetView<HomeController> {
             ),
             // Info Cards
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Obx(() => infoCard(
-                      "Total Scans",
-                      riwayatController.totalScans.value.toString(),
-                      LucideIcons.scanLine,
-                    )),
-                SizedBox(
-                  width: 10,
+                Expanded(
+                  child: Obx(() => infoCard(
+                        "Total Scans",
+                        riwayatController.totalScans.value.toString(),
+                        LucideIcons.scanLine,
+                      )),
                 ),
-                Obx(() => infoCard(
-                      "Total Dokter",
-                      homeController.totalDokter.value.toString(),
-                      Icons.medical_services,
-                    )),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Obx(() => infoCard(
+                        "Total Dokter",
+                        homeController.totalDokter.value.toString(),
+                        Icons.medical_services,
+                      )),
+                ),
               ],
             ),
             const SizedBox(height: 28),
@@ -160,37 +161,35 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget infoCard(String title, String value, IconData icon) {
-    return Expanded(
-      child: Container(
-        height: 110,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 5)],
-        ),
-        child: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: const TextStyle(
-                        color: Color(0XFF146EF5), fontSize: 16)),
-                Text(value,
-                    style: const TextStyle(
-                        color: Color(0XFF146EF5),
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold)),
-              ],
-            ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Icon(icon, color: Color(0XFF146EF5), size: 45),
-            ),
-          ],
-        ),
+    return Container(
+      height: 110,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 5)],
+      ),
+      child: Stack(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title,
+                  style:
+                      const TextStyle(color: Color(0XFF146EF5), fontSize: 16)),
+              Text(value,
+                  style: const TextStyle(
+                      color: Color(0XFF146EF5),
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold)),
+            ],
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Icon(icon, color: Color(0XFF146EF5), size: 45),
+          ),
+        ],
       ),
     );
   }
