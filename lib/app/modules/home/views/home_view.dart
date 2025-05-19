@@ -94,25 +94,26 @@ class HomeView extends GetView<HomeController> {
               children: [
                 Expanded(
                   child: InkWell(
-                      onTap: () {
-                        // Navigate to eye scanner screen
-                        Get.toNamed(Routes.EYESCANNER);
-                      },
-                      child: serviceCard(
-                          LucideIcons.eye, "Eyes Scan", "Menggunakan AI")),
+                    onTap: () {
+                      Get.toNamed(Routes.EYESCANNER);
+                    },
+                    child: serviceCard(
+                        LucideIcons.eye, "Eyes Scan", "Menggunakan AI"),
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: InkWell(
-                      onTap: () {
-                        Get.offAll(
-                          () => MainLayout(currentRoute: Routes.RIWAYAT),
-                          binding: MainBinding(),
-                          transition: Transition.noTransition,
-                        );
-                      },
-                      child: serviceCard(LucideIcons.fileSearch, "Scan History",
-                          "Hasil Scan Anda")),
+                    onTap: () {
+                      Get.offAll(
+                        () => MainLayout(currentRoute: Routes.RIWAYAT),
+                        binding: MainBinding(),
+                        transition: Transition.noTransition,
+                      );
+                    },
+                    child: serviceCard(LucideIcons.fileSearch, "Scan History",
+                        "Hasil Scan Anda"),
+                  ),
                 ),
               ],
             ),
@@ -195,29 +196,27 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget serviceCard(IconData icon, String title, String subtitle) {
-    return Expanded(
-      child: Container(
-        height: 160,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Color(0XFF146EF5),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, size: 43, color: Colors.white),
-            const SizedBox(height: 10),
-            Text(title,
-                style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
-            Text(subtitle,
-                style: const TextStyle(fontSize: 14, color: Colors.white70)),
-          ],
-        ),
+    return Container(
+      height: 160,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Color(0XFF146EF5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 43, color: Colors.white),
+          const SizedBox(height: 10),
+          Text(title,
+              style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white)),
+          Text(subtitle,
+              style: const TextStyle(fontSize: 14, color: Colors.white70)),
+        ],
       ),
     );
   }
