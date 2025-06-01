@@ -68,21 +68,22 @@ class HomeView extends GetView<HomeController> {
             ),
             // Info Cards
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Obx(() => infoCard(
-                      "Total Scans",
-                      riwayatController.totalScans.value.toString(),
-                      LucideIcons.scanLine,
-                    )),
-                SizedBox(
-                  width: 10,
+                Expanded(
+                  child: Obx(() => infoCard(
+                        "Total Scans",
+                        riwayatController.totalScans.value.toString(),
+                        LucideIcons.scanLine,
+                      )),
                 ),
-                Obx(() => infoCard(
-                      "Total Dokter",
-                      homeController.totalDokter.value.toString(),
-                      Icons.medical_services,
-                    )),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Obx(() => infoCard(
+                        "Total Dokter",
+                        homeController.totalDokter.value.toString(),
+                        Icons.medical_services,
+                      )),
+                ),
               ],
             ),
             const SizedBox(height: 28),
@@ -92,24 +93,26 @@ class HomeView extends GetView<HomeController> {
               children: [
                 Expanded(
                   child: InkWell(
-                      onTap: () {
-                        Get.toNamed(Routes.EYESCANNER);
-                      },
-                      child: serviceCard(
-                          LucideIcons.eye, "Eyes Scan", "Menggunakan AI")),
+                    onTap: () {
+                      Get.toNamed(Routes.EYESCANNER);
+                    },
+                    child: serviceCard(
+                        LucideIcons.eye, "Eyes Scan", "Menggunakan AI"),
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: InkWell(
-                      onTap: () {
-                        Get.offAll(
-                          () => MainLayout(currentRoute: Routes.RIWAYAT),
-                          binding: MainBinding(),
-                          transition: Transition.noTransition,
-                        );
-                      },
-                      child: serviceCard(LucideIcons.fileSearch, "Scan History",
-                          "Hasil Scan Anda")),
+                    onTap: () {
+                      Get.offAll(
+                        () => MainLayout(currentRoute: Routes.RIWAYAT),
+                        binding: MainBinding(),
+                        transition: Transition.noTransition,
+                      );
+                    },
+                    child: serviceCard(LucideIcons.fileSearch, "Scan History",
+                        "Hasil Scan Anda"),
+                  ),
                 ),
               ],
             ),
@@ -158,65 +161,61 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget infoCard(String title, String value, IconData icon) {
-    return Expanded(
-      child: Container(
-        height: 110,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 5)],
-        ),
-        child: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: const TextStyle(
-                        color: Color(0XFF146EF5), fontSize: 16)),
-                Text(value,
-                    style: const TextStyle(
-                        color: Color(0XFF146EF5),
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold)),
-              ],
-            ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Icon(icon, color: Color(0XFF146EF5), size: 45),
-            ),
-          ],
-        ),
+    return Container(
+      height: 110,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 5)],
+      ),
+      child: Stack(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title,
+                  style:
+                      const TextStyle(color: Color(0XFF146EF5), fontSize: 16)),
+              Text(value,
+                  style: const TextStyle(
+                      color: Color(0XFF146EF5),
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold)),
+            ],
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Icon(icon, color: Color(0XFF146EF5), size: 45),
+          ),
+        ],
       ),
     );
   }
 
   Widget serviceCard(IconData icon, String title, String subtitle) {
-    return Expanded(
-      child: Container(
-        height: 160,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Color(0XFF146EF5),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, size: 43, color: Colors.white),
-            const SizedBox(height: 10),
-            Text(title,
-                style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
-            Text(subtitle,
-                style: const TextStyle(fontSize: 14, color: Colors.white70)),
-          ],
-        ),
+    return Container(
+      height: 160,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Color(0XFF146EF5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 43, color: Colors.white),
+          const SizedBox(height: 10),
+          Text(title,
+              style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white)),
+          Text(subtitle,
+              style: const TextStyle(fontSize: 14, color: Colors.white70)),
+        ],
       ),
     );
   }

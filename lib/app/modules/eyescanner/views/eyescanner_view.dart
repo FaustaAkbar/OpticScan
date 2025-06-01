@@ -42,38 +42,46 @@ class EyescannerView extends GetView<EyescannerController> {
               return const SizedBox.shrink();
             }
           }),
-
           Positioned(
             top: 40,
-            right: 20,
-            child: IconButton(
-              icon: const Icon(Icons.cached, color: Colors.white, size: 32),
-              onPressed: () async {
-                if (controller.isCameraInitialized.value) {
-                  controller.isCameraInitialized.value = false;
-                  await controller.switchCamera();
-                }
-              },
+            left: 0,
+            right: 0,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                const Center(
+                  child: Text(
+                    "Ambil gambar mata",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+                Positioned(
+                  right: 20,
+                  child: IconButton(
+                    icon:
+                        const Icon(Icons.cached, color: Colors.white, size: 32),
+                    onPressed: () async {
+                      if (controller.isCameraInitialized.value) {
+                        controller.isCameraInitialized.value = false;
+                        await controller.switchCamera();
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
 
           Positioned.fill(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 50),
-                const Text(
-                  "Ambil gambar mata",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                const SizedBox(height: 20),
-                Center(
-                  child: Container(
-                    width: 250,
-                    height: 250,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.orange, width: 3),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                Container(
+                  width: 250,
+                  height: 250,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.orange, width: 3),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                 ),
               ],
