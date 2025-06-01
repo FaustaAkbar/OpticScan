@@ -54,8 +54,8 @@ class ExaminationRecord {
 
 class RiwayatController extends GetxController {
   final ExaminationService _examinationService = Get.find<ExaminationService>();
-  final selectedTab = 0.obs; // 0 = On Progress, 1 = Selesai
-  final selectedNavIndex = 1.obs; // 1 = Riwayat tab
+  final selectedTab = 0.obs;
+  final selectedNavIndex = 1.obs;
   final allExaminations = <ExaminationRecord>[].obs;
   final isLoading = false.obs;
   final errorMessage = ''.obs;
@@ -64,7 +64,6 @@ class RiwayatController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // mengambil data pemeriksaan dari backend
     fetchExaminationRecords();
   }
 
@@ -75,7 +74,6 @@ class RiwayatController extends GetxController {
     try {
       final response = await _examinationService.getExaminationResults();
       if (response.success && response.data != null) {
-        // Mengubah data backend menjadi objek ExaminationRecord
         final List<dynamic> examinationsData = response.data;
         allExaminations.value = examinationsData
             .map((data) => ExaminationRecord.fromJson(data))

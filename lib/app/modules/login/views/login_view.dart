@@ -14,7 +14,7 @@ class LoginView extends GetView<LoginController> {
   Widget build(BuildContext context) {
     final animCtrl = controller.animationController;
     final intervals = StaggeredIntervals(
-      totalFields: 4, // Header, email, password, button
+      totalFields: 4,
       endTime: 0.8,
     );
 

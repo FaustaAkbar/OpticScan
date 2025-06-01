@@ -49,16 +49,12 @@ class SplashscreenController extends GetxController
     logoController.forward();
     await Future.delayed(const Duration(milliseconds: 800));
     await letterAnimationController.animateLetters();
-    // cek apakah user sudah login
     try {
-      // ambil service User
       _userService = Get.find<UserService>();
-      // cek apakah user sudah login
       final isAuthenticated = await _userService.checkAuthStatus();
 
       await Future.delayed(const Duration(milliseconds: 1000));
       textController.forward().then((_) {
-        // navigasi ke HOME jika sudah login, jika tidak maka ke LOGIN
         String route = isAuthenticated ? Routes.HOME : Routes.LOGIN;
         Get.offNamed(
           route,
@@ -69,7 +65,6 @@ class SplashscreenController extends GetxController
         );
       });
     } catch (e) {
-      // jika service User tidak tersedia, langsung ke LOGIN
       await Future.delayed(const Duration(milliseconds: 1000));
       textController.forward().then((_) {
         Get.offNamed(

@@ -22,7 +22,6 @@ class MainLayout extends StatelessWidget {
   }
 
   Widget _buildBody() {
-    // untuk menampilkan halaman berdasarkan rute
     switch (currentRoute) {
       case Routes.HOME:
         return const HomeView();
@@ -36,7 +35,6 @@ class MainLayout extends StatelessWidget {
   }
 
   Widget _buildBottomNavBar() {
-    // Menentukan index berdasarkan rute
     int currentIndex;
 
     switch (currentRoute) {

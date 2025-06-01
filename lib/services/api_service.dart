@@ -32,7 +32,6 @@ class ApiService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // ambil token dari storage
           final prefs = await SharedPreferences.getInstance();
           final token = prefs.getString(ApiConstants.accessTokenKey);
           if (token != null) {
@@ -49,13 +48,11 @@ class ApiService {
             if (refreshed) {
               return handler.resolve(await _retry(error.requestOptions));
             } else {
-              // hapus token jika refresh gagal
               final prefs = await SharedPreferences.getInstance();
               await prefs.remove(ApiConstants.accessTokenKey);
               await prefs.remove(ApiConstants.userRoleKey);
               await prefs.remove(ApiConstants.refreshTokenKey);
 
-              // redirect ke login jika refresh gagal
               if (getx.Get.currentRoute != '/login') {
                 getx.Get.offAllNamed('/login');
               }
@@ -120,18 +117,15 @@ class ApiService {
         options: options,
       );
       if (response.statusCode == 200) {
-        // simpan token ke storage
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(
             ApiConstants.accessTokenKey, response.data['accessToken']);
         await prefs.setString(ApiConstants.userRoleKey, response.data['role']);
 
-        // ambil refresh token dari cookies
         if (response.headers['set-cookie'] != null) {
           final cookies = response.headers['set-cookie'];
           String? refreshToken;
 
-          // cari refresh token di cookies
           for (String? cookie in cookies ?? []) {
             if (cookie != null && cookie.startsWith('jwt=')) {
               refreshToken = cookie.split(';')[0].substring(4);
@@ -140,7 +134,6 @@ class ApiService {
           }
 
           if (refreshToken != null && refreshToken.isNotEmpty) {
-            // simpan refresh token ke storage
             await prefs.setString(ApiConstants.refreshTokenKey, refreshToken);
           }
         }
@@ -183,7 +176,6 @@ class ApiService {
     required DateTime birthdate,
   }) async {
     try {
-      // format tanggal ke YYYY-MM-DD
       final formattedDate =
           '${birthdate.year}-${birthdate.month.toString().padLeft(2, '0')}-${birthdate.day.toString().padLeft(2, '0')}';
       final response = await _dio.post(ApiConstants.registerEndpoint, data: {
@@ -230,12 +222,11 @@ class ApiService {
       final dio = Dio();
       dio.options.baseUrl = _baseUrl;
 
-      // set up options dengan refresh token di cookie
       final options = Options(
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Cookie': 'jwt=$refreshToken', // kirim refresh token di cookie
+          'Cookie': 'jwt=$refreshToken',
         },
         extra: {
           'withCredentials': true,
@@ -248,16 +239,13 @@ class ApiService {
       );
 
       if (response.statusCode == 200 && response.data['accessToken'] != null) {
-        // simpan token baru
         await prefs.setString(
             ApiConstants.accessTokenKey, response.data['accessToken']);
 
-        // cek apakah ada refresh token baru di cookies
         if (response.headers['set-cookie'] != null) {
           final cookies = response.headers['set-cookie'];
           String? newRefreshToken;
 
-          // cari refresh token di cookies
           for (String? cookie in cookies ?? []) {
             if (cookie != null && cookie.startsWith('jwt=')) {
               newRefreshToken = cookie.split(';')[0].substring(4);
@@ -266,7 +254,6 @@ class ApiService {
           }
 
           if (newRefreshToken != null && newRefreshToken.isNotEmpty) {
-            // simpan refresh token baru
             await prefs.setString(
                 ApiConstants.refreshTokenKey, newRefreshToken);
           }
@@ -274,7 +261,6 @@ class ApiService {
 
         return true;
       } else {
-        // refresh token gagal
         return false;
       }
     } catch (e) {
@@ -287,7 +273,6 @@ class ApiService {
     try {
       final dio = Dio();
       dio.options.baseUrl = _baseUrl;
-      // ambil refresh token dari storage
       final prefs = await SharedPreferences.getInstance();
       final refreshToken = prefs.getString(ApiConstants.refreshTokenKey);
       final options = Options(
@@ -299,7 +284,6 @@ class ApiService {
           'withCredentials': true,
         },
       );
-      // tambah refresh token ke cookie
       if (refreshToken != null) {
         options.headers?['Cookie'] = 'jwt=$refreshToken';
       }
@@ -307,7 +291,6 @@ class ApiService {
         ApiConstants.logoutEndpoint,
         options: options,
       );
-      // hapus semua token dari storage
       await prefs.remove(ApiConstants.accessTokenKey);
       await prefs.remove(ApiConstants.userRoleKey);
       await prefs.remove(ApiConstants.userIdKey);
@@ -317,7 +300,6 @@ class ApiService {
         message: response.data['message'] ?? 'Logged out successfully',
       );
     } catch (e) {
-      // hapus token kalau error
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(ApiConstants.accessTokenKey);
       await prefs.remove(ApiConstants.userRoleKey);

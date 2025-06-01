@@ -79,7 +79,6 @@ class LoginController extends GetxController
   // ========= validasi input =========
   bool _validateInputs() {
     bool isValid = true;
-    // validasi email
     if (emailController.text.isEmpty) {
       emailError.value = 'Email is required';
       isValid = false;
@@ -87,7 +86,6 @@ class LoginController extends GetxController
       emailError.value = 'Please enter a valid email';
       isValid = false;
     }
-    // validasi password
     if (passwordController.text.isEmpty) {
       passwordError.value = 'Password is required';
       isValid = false;

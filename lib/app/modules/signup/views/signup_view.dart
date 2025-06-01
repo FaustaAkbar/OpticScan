@@ -13,7 +13,7 @@ class SignupView extends GetView<SignupController> {
   Widget build(BuildContext context) {
     final animationController = controller.animationController;
     final intervals = StaggeredIntervals(
-      totalFields: 6, // Header, name, birth date, email, password, button
+      totalFields: 6,
       endTime: 0.8,
     );
 

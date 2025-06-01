@@ -6,7 +6,6 @@ import 'package:IntelliSight/app/modules/riwayat/controllers/riwayat_controller.
 class MainBinding extends Bindings {
   @override
   void dependencies() {
-    // inisialisasi controller
     Get.lazyPut<HomeController>(() => HomeController());
     Get.lazyPut<RiwayatController>(() => RiwayatController());
     Get.lazyPut<ProfileController>(() => ProfileController());

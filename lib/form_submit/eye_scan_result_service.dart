@@ -15,7 +15,6 @@ class EyeScanResultService {
     required File image,
   }) async {
     try {
-      // Validate file type
       final extension = path.extension(image.path).toLowerCase();
       if (extension != '.jpg' && extension != '.jpeg' && extension != '.png') {
         return ApiResponse(
@@ -31,21 +30,18 @@ class EyeScanResultService {
         return ApiResponse(success: false, message: 'Token tidak ditemukan');
       }
 
-      // Determine MIME type based on extension
       String mimeType;
       if (extension == '.jpg' || extension == '.jpeg') {
         mimeType = 'image/jpeg';
       } else if (extension == '.png') {
         mimeType = 'image/png';
       } else {
-        // This shouldn't happen due to validation above, but just in case
         return ApiResponse(
             success: false, message: 'Format file tidak didukung.');
       }
 
-      // Create form data with all required fields
       final formData = FormData.fromMap({
-        if (name != null) 'name': name, // Include name if not null
+        if (name != null) 'name': name,
         'complaints': complaint,
         'eye_pic': await MultipartFile.fromFile(
           image.path,
@@ -62,10 +58,8 @@ class EyeScanResultService {
             'Authorization': 'Bearer $token',
             'Accept': 'application/json',
           },
-          // Let Dio set the content type automatically for multipart/form-data
           validateStatus: (status) {
-            return status != null &&
-                status < 500; // Accept all non-500 status codes for debugging
+            return status != null && status < 500;
           },
         ),
       );

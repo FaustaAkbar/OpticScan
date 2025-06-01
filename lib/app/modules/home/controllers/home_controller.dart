@@ -10,12 +10,12 @@ class HomeController extends GetxController {
   final totalPasien = 0.obs;
   final totalDokter = 0.obs;
 
-  final ApiService _apiService = ApiService(); // Tambahkan ApiService
+  final ApiService _apiService = ApiService();
 
   @override
   void onInit() {
     super.onInit();
-    fetchUserCounts(); // Ambil data saat inisialisasi
+    fetchUserCounts();
   }
 
   void increment() => count.value++;
@@ -35,14 +35,11 @@ class HomeController extends GetxController {
     }
   }
 
-  // Tambahkan method untuk fetch user counts
   void fetchUserCounts() async {
     try {
       final result = await _apiService.fetchUserCounts();
       totalPasien.value = result.data['total_pasien'] ?? 0;
       totalDokter.value = result.data['total_dokter'] ?? 0;
-      // totalPasien.value = result['total_pasien'] ?? 0;
-      // totalDokter.value = result['total_dokter'] ?? 0;
     } catch (e) {
       //
     }

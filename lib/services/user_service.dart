@@ -28,21 +28,17 @@ class UserService extends GetxService {
         return false;
       }
 
-      // cek apakah token sudah expired
       if (JwtDecoder.isExpired(token)) {
-        // coba refresh token
         final refreshed = await _refreshToken();
         if (!refreshed) {
           _resetAuthState();
           return false;
         }
       }
-      // ambil role yang disimpan atau ambil data user
       final savedRole = prefs.getString(ApiConstants.userRoleKey);
       if (savedRole != null) {
         userRole.value = savedRole;
       } else {
-        // ambil data user jika role tidak ditemukan
         final response = await _apiService.getCurrentUser();
         if (response.success && response.data != null) {
           userData.value = response.data;

@@ -18,7 +18,6 @@ class NavBarItem {
 class PersistentBottomNavBar extends StatelessWidget {
   final int currentIndex;
 
-  // Rute untuk navbar bawah
   static final List<NavBarItem> items = [
     NavBarItem(
       icon: Icons.home_outlined,

@@ -14,7 +14,7 @@ class EyeScanResultController extends GetxController {
   final UserService _userService = Get.find<UserService>();
 
   Future<void> submitScan() async {
-    final name = nameController.text.trim(); // Ambil nama
+    final name = nameController.text.trim();
     final complaint = complaintController.text.trim();
     final image = imageFile.value;
 
@@ -28,18 +28,16 @@ class EyeScanResultController extends GetxController {
 
     try {
       final response = await _scanService.submitScan(
-        name: name, // Kirim nama
+        name: name,
         complaint: complaint,
         image: image,
       );
 
       if (response.success) {
-        // Get.snackbar('Berhasil', response.message,
-        //     backgroundColor: Colors.green, colorText: Colors.white);
         _showSuccessDialog(response.message);
-        nameController.clear(); // Reset nama
-        complaintController.clear(); // Reset keluhan
-        imageFile.value = null; // Reset gambar
+        nameController.clear();
+        complaintController.clear();
+        imageFile.value = null;
       } else {
         Get.snackbar('Gagal', response.message,
             backgroundColor: Colors.red, colorText: Colors.white);
@@ -124,8 +122,7 @@ class EyeScanResultController extends GetxController {
                   height: 29,
                   child: ElevatedButton(
                     onPressed: () {
-                      Get.back(); // tutup dialog
-                      // Tambahkan logika jika ingin kembali ke halaman tertentu
+                      Get.back();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF146EF5),

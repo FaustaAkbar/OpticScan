@@ -16,7 +16,6 @@ class SignupController extends GetxController
   final isPasswordVisible = false.obs;
   final Rx<DateTime?> birthDate = Rx<DateTime?>(null);
 
-  // Validasi input
   final nameError = ''.obs;
   final emailError = ''.obs;
   final passwordError = ''.obs;
@@ -42,7 +41,6 @@ class SignupController extends GetxController
     super.onClose();
   }
 
-  // Setup listeners untuk membersihkan error saat user mengetik
   void _setupTextFieldListeners() {
     nameController.addListener(() {
       if (nameController.text.trim().isNotEmpty) {
@@ -61,7 +59,6 @@ class SignupController extends GetxController
     });
   }
 
-  // Method untuk membersihkan form fields
   void clearFormFields() {
     nameController.clear();
     emailController.clear();
@@ -73,17 +70,14 @@ class SignupController extends GetxController
     birthDateError.value = '';
   }
 
-  // Reset animation controller
   void resetAnimation() {
     animationController.reset();
     animationController.forward();
   }
 
-  // Navigate to login page
   void goToLogin() {
     clearFormFields();
 
-    // Reset login animation if LoginController exists
     if (Get.isRegistered<LoginController>()) {
       final loginController = Get.find<LoginController>();
       loginController.resetAnimation();
@@ -137,25 +131,21 @@ class SignupController extends GetxController
   bool _validateInputs() {
     bool isValid = true;
 
-    // membersihkan error
     nameError.value = '';
     birthDateError.value = '';
     emailError.value = '';
     passwordError.value = '';
 
-    // Validasi nama
     if (nameController.text.trim().isEmpty) {
       nameError.value = 'Name is required';
       isValid = false;
     }
 
-    // Validasi tanggal lahir
     if (birthDate.value == null) {
       birthDateError.value = 'Birth date is required';
       isValid = false;
     }
 
-    // Validasi email
     if (emailController.text.trim().isEmpty) {
       emailError.value = 'Email is required';
       isValid = false;
@@ -164,7 +154,6 @@ class SignupController extends GetxController
       isValid = false;
     }
 
-    // Validasi password
     if (passwordController.text.isEmpty) {
       passwordError.value = 'Password is required';
       isValid = false;
@@ -204,7 +193,6 @@ class SignupController extends GetxController
     }
   }
 
-  // menampilkan pesan sukses
   void _showSuccessMessage(String message) {
     Get.snackbar(
       'Success',
@@ -215,7 +203,6 @@ class SignupController extends GetxController
     );
   }
 
-  // menampilkan pesan error
   void _showErrorMessage(String message) {
     Get.snackbar(
       'Error',

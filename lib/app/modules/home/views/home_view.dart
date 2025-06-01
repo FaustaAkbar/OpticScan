@@ -52,7 +52,6 @@ class HomeView extends GetView<HomeController> {
                                       ?.hasAbsolutePath ==
                                   true)
                           ? NetworkImage(
-                              // '${ApiConstants.baseUrlEmulator}/${profileController.profileImageUrl}',
                               '${ApiConstants.baseUrlEmulator}/images/profile-pics/${profileController.profilePic.value}',
                             )
                           : null,
@@ -94,7 +93,6 @@ class HomeView extends GetView<HomeController> {
                 Expanded(
                   child: InkWell(
                       onTap: () {
-                        // Navigate to eye scanner screen
                         Get.toNamed(Routes.EYESCANNER);
                       },
                       child: serviceCard(
