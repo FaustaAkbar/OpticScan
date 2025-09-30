@@ -1,14 +1,15 @@
 
-# 👁️ OpticScan  
+# <img src="UI/visible.png" width="24"/> OpticScan
+ 
 
 **OpticScan** is a smart mobile application designed to help diagnose eye diseases using **Artificial Intelligence (AI)** as well as **direct consultation with doctors**. The app aims to make eye care more **accessible, reliable, and efficient** by combining the power of AI with professional medical expertise.  
-
 <div align="center">
   <img src="UI/screen1.png" alt="Screenshot 1" width="200"/>
   <img src="UI/screen2.png" alt="Screenshot 2" width="200"/>
   <img src="UI/screen3.png" alt="Screenshot 3" width="200"/>
   <img src="UI/screen4.png" alt="Screenshot 4" width="200"/>
 </div>
+
 ---
 
 ## ✨ Features  
