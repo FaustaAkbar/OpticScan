@@ -27,7 +27,7 @@
 
 You can try the app by downloading the latest APK release here:  
 
-👉 [**Download OpticScan APK**](https://github.com/your-username/optic-scan/releases)  
+👉 [**Download OpticScan APK**](https://github.com/FaustaAkbar/OpticScan/releases/download/v1.0.0/OpticScan.apk)  
 
 *(Make sure to allow installation from unknown sources on your device settings.)*  
 
